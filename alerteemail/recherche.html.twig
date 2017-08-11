@@ -1,0 +1,195 @@
+<fieldset>
+    <div class="form-group flex">
+        <label for="typecategorie">{{ "#typebien"|translate|capitalize }} *</label>
+        <select class="selectpicker" name="typecategorie" id="typecategorie" required>
+            <option value="" selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            {#<option value="tous">Tous</option>#}
+            <option value="vente-maison">{{ "#ventemaisonalerte"|translate|capitalize }}</option>
+            <option value="vente-appartement">{{ "#venteappartementalerte"|translate|capitalize }}</option>
+            <option value="vente-terrain">{{ "#venteterrainalerte"|translate|capitalize }}</option>
+            <option value="vente-garage">{{ "#ventegaragealerte"|translate|capitalize }}</option>
+            <option value="location-maison">{{ "#locationmaisonalerte"|translate|capitalize }}</option>
+            <option value="location-appartement">{{ "#locationappartementalerte"|translate|capitalize }}</option>
+            <option value="location-garage">{{ "#locationgaragealerte"|translate|capitalize }}</option>
+            <option value="professionnel-droitbailvente">{{ "#professionneldroitbailventealerte"|translate|capitalize }}</option>
+            <option value="professionnel-fondcommercelocation">{{ "#professionnelfondcommercelocationalerte"|translate|capitalize }}</option>
+            <option value="professionnel-locauxlocation">{{ "#professionnellocauxlocationalerte"|translate|capitalize }}</option>
+            <option value="professionnel-fondcommercevente">{{ "#professionnelfondcommerceventealerte"|translate|capitalize }}</option>
+            <option value="professionnel-locauxvente">{{ "#professionnellocauxventealerte"|translate|capitalize }}</option>
+            <option value="autres-biens">{{ "#autresbiensalerte"|translate|capitalize }}</option>
+        </select>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-type='["vente","autres"]' data-categorie='["fondcommercevente","locauxvente","droitbailvente"]'>
+    <div class="form-group float">
+        <label for="budget">{{ "#budgetvente"|translate|capitalize }}*</label>
+        <div class="input-group">
+            <input type="text" name="budget" data-required="1" class="form-control" id="budgetv" tabindex="18">
+            <span class="input-group-addon">&euro;</span>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-type='["location"]' data-categorie='["fondcommercelocation","locauxlocation"]'>
+    <div class="form-group float">
+        <label for="budget">{{ "#budgetlocation"|translate|capitalize }}*</label>
+        <div class="input-group">
+            <input type="text" name="budget" data-required="1" class="form-control" id="budgetl" tabindex="18">
+            <span class="input-group-addon">€/{{ "#mois"|translate|capitalize }}</span>
+        </div>
+    </div>
+</fieldset>
+<fieldset style="display:none" data-categorie='["appartement"]'>
+    <div class="form-group flex">
+        <label for="pieces">{{ "#pieces"|translate|capitalize }}</label>
+        <select class="selectpicker" name="piece" id="pieces" data-live-search="true">
+            <option selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            {% for i in 1..5 %}
+                <option value="{{ i }}">{{ i }}</option>
+                <option value="{{ i }}+">{{ i }} minimum</option>
+            {% endfor %}
+        </select>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-categorie='["maison"]'>
+    <div class="form-group flex">
+        <label for="pieces">{{ "#chambres"|translate|capitalize }}</label>
+        <select class="selectpicker" name="chambre" id="chambres" data-live-search="true">
+            <option selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            {% for i in 1..10 %}
+                <option value="{{ i }}+">{{ i }} minimum</option>
+            {% endfor %}
+        </select>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-categorie='["maison"]'>
+    <div class="form-group flex">
+        <label for="niveau">{{ "#niveaumaxalerte"|translate|capitalize }}</label>
+        <select class="selectpicker" name="niveau" id="niveau" data-live-search="true">
+            <option selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="Rez-de-chaussée">{{ "#rezdechaussee"|translate|capitalize }}</option>
+            <option value="Rez-de-jardin">{{ "#rezdejardin"|translate|capitalize }}</option>
+            {#<option value="Sous-sol">{{ "#soussol"|translate|capitalize }}</option>#}
+            <option value="Plain-pied">{{ "#plainpied"|translate|capitalize }}</option>
+        </select>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-categorie='["appartement"]'>
+    <div class="form-group flex">
+        <label for="etage">{{ "#etageminalerte"|translate|capitalize }}</label>
+        <select class="selectpicker" name="etage" id="etage" data-live-search="true">
+            <option selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            {#<option value="-3">-3</option>
+            <option value="-2">-2</option>
+            <option value="-1">-1</option>#}
+            <option value="1er+">1er minimum</option>
+            <option value="2eme+">2eme minimum</option>
+            <option value="3eme+">3eme minimum</option>
+            <option value="4eme+">4eme minimum</option>
+            <option value="5eme+">5eme minimum</option>
+            <option value="6eme+">6eme minimum</option>
+            <option value="7eme+">7eme minimum</option>
+            <option value="8eme+">8eme minimum</option>
+            <option value="Dernier">{{ "#dernier"|translate|capitalize }}</option>
+            {#<option value="Pas de porte">{{ "#pasdeporte"|translate|capitalize }}</option>#}
+            <option value="Rez-de-chaussée">{{ "#rezdechaussee"|translate|capitalize }}</option>
+            <option value="Rez-de-jardin">{{ "#rezdejardin"|translate|capitalize }}</option>
+            {#<option value="Sous-sol">{{ "#soussol"|translate|capitalize }}</option>#}
+        </select>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-categorie='["terrain"]'>
+    <div class="form-group flex">
+        <label for="natures">{{ "#natures"|translate|capitalize }}</label>
+        <select class="selectpicker" name="natures[]" id="natures" multiple data-live-search="true">
+            <option selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            <option value="Terrain">{{ "#terraintous"|translate|capitalize }}</option>
+            <option value="Terrain agricole">{{ "#terrainagricole"|translate|capitalize }}</option>
+            <option value="Terrain avec maison">{{ "#terrainavecmaison"|translate|capitalize }}</option>
+            <option value="Terrain constructible">{{ "#terrainconstructible"|translate|capitalize }}</option>
+            <option value="Terrain individuel">{{ "#terrainindividuel"|translate|capitalize }}</option>
+            <option value="Terrain industriel">{{ "#terrainindustriel"|translate|capitalize }}</option>
+            <option value="Terrain loisirs">{{ "#terrainloisirs"|translate|capitalize }}</option>
+            <option value="Terrain non constructible">{{ "#terrainnonconstructible"|translate|capitalize }}</option>
+        </select>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-categorie='["terrain"]'>
+    <div class="form-group flex">
+        <label for="expositions">{{ "#expositions"|translate|capitalize }}</label>
+        <select class="selectpicker" name="expositions[]" id="expositions" multiple data-live-search="true">
+            <option selected>{{ "#aucunselect"|translate|capitalize }}</option>
+            <option value="Est">{{ "#expoest"|translate|capitalize }}</option>
+            <option value="Est ouest">{{ "#expoestouest"|translate|capitalize }}</option>
+            <option value="Nord">{{ "#exponord"|translate|capitalize }}</option>
+            <option value="Nord est">{{ "#exponordest"|translate|capitalize }}</option>
+            <option value="Nord ouest">{{ "#exponordouest"|translate|capitalize }}</option>
+            <option value="Ouest">{{ "#expoouest"|translate|capitalize }}</option>
+            <option value="Plein sud">{{ "#expopleinsud"|translate|capitalize }}</option>
+            <option value="Sud">{{ "#exposud"|translate|capitalize }}</option>
+            <option value="Sud est">{{ "#exposudest"|translate|capitalize }}</option>
+            <option value="Sud nord">{{ "#exposudnord"|translate|capitalize }}</option>
+            <option value="Sud ouest">{{ "#exposudouest"|translate|capitalize }}</option>
+        </select>
+    </div>
+</fieldset>
+<fieldset style="display:none" data-type='["vente","location"]' data-categorie='["locauxvente","locauxlocation"]'>
+    <div class="form-group float">
+        <label for="surface">{{ "#surfacemin"|translate|striptags|capitalize }}</label>
+        <div class="input-group">
+            <input type="text" name="surface" class="form-control" id="surface" tabindex="16">
+            <span class="input-group-addon">m&sup2;</span>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset style="display:none" data-categorie='["maison"]'>
+    <div class="form-group float">
+        <label for="terrain">{{ "#terrainalerte"|translate|capitalize }}</label>
+        <div class="input-group">
+            <input type="text" name="terrain" class="form-control" id="terrain" tabindex="17">
+            <span class="input-group-addon">m&sup2;</span>
+        </div>
+    </div>
+</fieldset>
+
+<div id="coche">
+    <fieldset style="display:none" class="checkboxgroup estimation-form-prestations" data-categorie='["appartement","maison"]'>
+        <div class="checkbox-categorie form-group">
+            <div class="checkboxes">
+                <label class="estimation-form-prestations-parking-label">
+                    <input type="checkbox" name="garage" id="garage" value="1" tabindex="28">
+                    {{ "#parkingalerte"|translate|capitalize }}
+                </label>
+            </div>
+            <div class="checkboxes"  data-categorie='["appartement"]'>
+                <label class="estimation-form-prestations-ascenseur-label" data-categorie='["appartement"]'>
+                    <input type="checkbox" name="terrasse" id="terrasse" value="1" tabindex="31">
+                    {{ "#terrasse"|translate|capitalize }}
+                </label>
+            </div>
+            <div class="checkboxes">
+                <label class="estimation-form-prestations-ascenseur-label" data-categorie='["maison"]'>
+                    <input type="checkbox" name="individuelle" id="individuelle" value="1" tabindex="31">
+                    {{ "#individuellealerte"|translate|capitalize }}
+                </label>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<fieldset style="display:none" data-type='["vente", "location", "professionnel","autres"]'>
+    <div class="form-group">
+        <label for="terrain">{{ "#autrescriteresalertesemail"|translate|capitalize }}</label>
+        <textarea name="texte" rows="4" class="form-control"></textarea>
+    </div>
+</fieldset>

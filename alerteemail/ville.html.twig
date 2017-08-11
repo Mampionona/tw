@@ -1,0 +1,19 @@
+<div style="display:none" class="righttxt" data-type='["vente","location","professionnel","autres"]'>
+    <fieldset>
+        <div class="form-group flex">
+            <label for="villesauto">{{ "#ville"|translate|capitalize }}*</label>
+            <select id="villesauto" name="villesauto" class="selectpicker selectpickerajax" data-live-search="true"></select>
+        </div>
+
+        <div class="form-group flex">
+            <label for="villesauto">{{ "#etendre"|translate|capitalize }}</label>
+            <div class="distance">
+                <button type="button" id="elargirmoins" data-cran="1"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                <input type="text" value="+5 km" id="elargirkm" class="form-control" readonly data-bas=0 data-haut=20 />
+                <button type="button" id="elargirplus" data-cran=1><i class="fa fa-plus" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        {#<button id="addville" disabled>Ajouter</button>#}
+        <div id="selectvilles"></div>
+    </fieldset>
+</div>

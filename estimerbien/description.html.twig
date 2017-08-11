@@ -1,0 +1,76 @@
+<h2>{{ "#descriptionbienestimer"|translate|capitalize }} <small>({{ "#infosnecessaires"|translate|capitalize }})</small></h2>
+
+<fieldset>
+    <div class="form-group flex">
+        <legend>{{ "#typebien"|translate|capitalize }}</legend>
+        <div class="radios">
+            <label>
+                <input type="radio" name="biencategorie" id="appartement" value="appartement" unchecked tabindex="5">
+                {{ "#appartement"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="biencategorie" id="maison" value="maison" tabindex="6">
+                {{ "#maison"|translate|capitalize }}
+            </label>
+            <label for="">{{ "#autretypebien"|translate|capitalize }}</label>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="form-group flex">
+        <legend>{{ "#nbpieces"|translate|capitalize }}</legend>
+        <div class="radios">
+            <label>
+                <input type="radio" name="bienpieces" id="studio" value="studio" unchecked tabindex="7">
+                {{ "#studio"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienpieces" id="deuxpieces" value="2 pièces" tabindex="8">
+                {{ "#deuxpieces"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienpieces" id="troispieces" value="3 pièces" tabindex="9">
+                {{ "#troispieces"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienpieces" id="quatrepieces" value="4 pièces" tabindex="10">
+                {{ "#quatrepieces"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienpieces" id="cinqpiecesplus" value="5 pièces et plus" tabindex="11">
+                {{ "#cinqpiecesplus"|translate|capitalize }}
+            </label>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="form-group">
+        <label for="adresse" class="label-adresse">{{ "#adresse"|translate|capitalize }}</label>
+        <textarea name="bienadresse" class="form-control" id="adresse" tabindex="12" row="3"></textarea>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="codepostal" class="label-codepostal">{{ "#codepostal"|translate|capitalize }}</label>
+                <input type="text" name="biencodepostal" class="form-control" id="codepostal" tabindex="13">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="ville" class="label-ville">{{ "#ville"|translate|capitalize }}</label>
+                <input type="text" name="bienville" class="form-control" id="ville" tabindex="14">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="bienpays" class="label-pays">{{ "#pays"|translate|capitalize }}</label>
+                <input type="text" name="bienpays" class="form-control" id="pays" tabindex="15">
+            </div>
+        </div>
+    </div>
+</fieldset>

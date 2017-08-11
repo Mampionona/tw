@@ -1,0 +1,314 @@
+{% extends('structure/layout.html.twig') %}
+
+{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
+{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+
+{% block linkCSS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block classBody %}page-statique estimation alerte{% endblock classBody %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-statique-content">
+                    <h1>{{ "#alerteemail"|translate|capitalize }}</h1>
+                    <div class="alerteemail-content">
+                        <form class="alerteemail-form" action="" role="form">
+                            <input style="display:none;" type="text" id="testform1" name="testform1" value="25dV871c" />
+                            <input style="display:none;" type="text" id="testform2" name="testform2" value="" />
+                            <input style="display:none;" type="text" id="emailform2" name="emailform2" value="" />
+
+                            <!-- NOTES POUR INTEGRATION
+                            NE PAS TOUCHER AUX NAME DES INPUTS,SELECT
+                            CHAMPS OBLIG 'civilite', 'nom', 'email', 'portable', 'type', 'categorie', 'budget', 'villes' -->
+
+                            <div class="estimation-form-description">
+                                <h1>{{ "#alertemailsstitre"|translate|capitalize }}</h1>
+                                <h2 class="titre-align">{{ "#votrerech"|translate|capitalize }}</h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="votre-recherche">
+                                            {% include 'structure/elements/alerteemail/recherche.html.twig' %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        {% include 'structure/elements/alerteemail/ville.html.twig' %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {% include 'structure/elements/alerteemail/coordonnees.html.twig' %}
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="contact-pref">
+                                        {% include 'structure/elements/alerteemail/contactpref.html.twig' %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-submit Center-block horairecheck">
+                                <button type="submit" id="alerteemail-form-submit" class="btn submit" tabindex="35">{{ "#enregistreralerte"|translate|capitalize }}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="loi">
+                        <hr>
+                        <p>
+                            {% if LANG == 'fr' %}
+                                L'enregistrement de cet email est sous réserve de validation par nos services. Pour vous désabonner, envoyez un email à {{ tw.agence.mail }} ou contactez-nous.<BR>
+                                Les informations communiquées sont destinées à {{ tw.agence.nomFr }} éditrice de ce site.<br>
+                                Vous bénéficiez d'un droit d'accès à vos données personelles (Loi n°2004-575 du 21 Juin 2004). Pour les exercer, contactez {{ tw.agence.nomFr }}.
+                            {% else %}
+                                The registration of this email is subject to validation by our services. To unsubscribe, send an email to {{ tw.agence.mail }} or contact us.<br>
+                                The information provided is for the use of the Real Estate Agency publisher of this website only.<br>
+                                You have a right of access to your personal data (Law n ° 2004-575 of 21 June 2004). To exercise them, contact {{ tw.agence.nomEn }}.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+    <script type="text/javascript" src="/lib/bootstrap-select/js/ajax-bootstrap-select.min.js"></script>
+    <script  src="/default/lib/twimmo/twplugins-0.0.1.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function (){
+            $("input[name='heurespref[]']").on('change', function(){
+                var id = $(this).attr('id');
+                var sspref = $("input[name='heurespref[]'][value='']:checked").length;
+                var checked = $("input[name='heurespref[]']:checked").length;
+                if (sspref && checked > 1){
+                    if (id == 'rb1'){
+                        //CAS COCHE SS PREF ET DEJA AUTRES CHOIX COCHES
+                        $("input[name='heurespref[]'][value!='']:checked").attr('checked', false);
+                    } else{
+                        $("input[name='heurespref[]'][value='']:checked").attr('checked', false);
+                    }
+                }
+            });
+
+            $("#selectvilles").on("click", ".deleteville", function(){
+                $(this).parent("div").remove();
+            });
+
+            function addVilleGeo(cp, ville, pays){
+                var $blockAppend = $("#selectvilles");
+                var label = ville + " " + cp;
+                if (!($blockAppend.find("div p:contains('" + label + "')").length)){
+                    var $newVille = $("<div/>");
+                    $newVille.data("cp", cp);
+                    $newVille.data("ville", ville);
+                    $newVille.data("pays", pays);
+                    $newVille.append("<button class='deleteville'>X</button><p>" + label + "</p>");
+                    $blockAppend.append($newVille);
+                }
+            }
+
+            $("#elargirmoins, #elargirplus").on("click", function(){
+                var cran = $(this).data("cran");
+                var valueKm = parseInt($("#elargirkm").val());
+                var limitebas = $("#elargirkm").data("bas");
+                var limitehaut = $("#elargirkm").data("haut");
+                if ($(this).attr("id") == "elargirmoins"){
+                    if ((valueKm - cran) >= limitebas){
+                        valueKm = valueKm - cran;
+                    } else{
+                        valueKm = limitebas;
+                    }
+                } else{
+                    if ((valueKm + cran) <= limitehaut){
+                        valueKm = valueKm + cran;
+                    } else{
+                        valueKm = limitehaut;
+                    }
+                }
+                $("#elargirkm").val('+' + valueKm + ' km');
+                chercherVilles();
+            });
+
+            function chercherVilles(){
+                var valueKm = parseInt($("#elargirkm").val());
+                var ville = $("#villesauto").val();
+                if (ville){
+                    $("#selectvilles>div").remove();
+                    $.ajax({
+                        url: "http://donnee.twimmo.net/1-6fcfa55d6e058454a32d8aa676bc2832/localisation/proximite/geo.json?_max=30",
+                        dataType: "jsonp",
+                        data: {
+                            Villecp: ville,
+                            distance: valueKm > 0 ? valueKm : 0.01
+                        },
+                        success: function(data) {
+                            $.map(data, function(item) {
+                                addVilleGeo(item.codepostal, item.ville, "France");
+                            });
+                        },
+                        beforeSend:function(){
+                        },
+                        complete:function(){
+                        }
+                    });
+                }
+            }
+
+            $('#typecategorie').on('change', function(){
+                var typecategorie = $(this).val().split('-');
+                $("[data-categorie],[data-type]").each(function(){
+                    if (($(this).data("type") && $.inArray(typecategorie[0], $(this).data("type")) !== - 1)
+                        || ($(this).data("categorie") && $.inArray(typecategorie[1], $(this).data("categorie")) !== - 1)){
+                        $(this).find('[data-required]').each(function(){
+                            $(this).attr('required',true);
+                        });
+                        $(this).show();
+                    } else{
+                        $(this).find('[required]').each(function(){
+                            $(this).removeAttr('required');
+                            $(this).data('required',1);
+                        });
+                        $(this).hide();
+                    }
+                });
+            });
+
+            $('#typecategorie').change();
+
+            $('.alerteemail-content .selectpicker').selectpicker({
+                noneSelectedText:{{ "#aucunselect"|translate|capitalize|json_encode()|raw }}
+            }).filter(".selectpickerajax").ajaxSelectPicker({
+                ajax: {
+                    url: 'http://donnee.twimmo.net/1-6fcfa55d6e058454a32d8aa676bc2832/localisation/search/geo.json?_max=30',
+                    dataType: 'jsonp',
+                    type    : 'POST',
+                    data: function () {
+                        {% raw %}
+                            var params = {
+                                Villecp: '{{{q}}}'
+                            };
+                        {% endraw %}
+                        return params;
+                    }
+                },
+                locale: {
+                emptyTitle:{{ '#aucunevilleselect'|translate|capitalize|json_encode()|raw }},
+                    statusSearching:{{ "#rechercheencours"|translate|capitalize|json_encode()|raw }},
+                    statusNoResults:{{ "#aucunevilletrouvee"|translate|capitalize|json_encode()|raw }},
+                    statusInitialized:{{ "#aucunselect"|translate|capitalize|json_encode()|raw }},
+                    searchPlaceholder:{{ "#saisirville"|translate|capitalize|json_encode()|raw }}
+                },
+                preprocessData: function(data){
+                    var villes = [];
+                    villes.push({
+                        'value': '',
+                        'text': '',
+                    });
+                    var len = Object.keys(data).length;
+                    var villeDepLast, villeDepCurr = false;
+                    var occurence = [];
+                    for (var i = 0; i < len; i++){
+                        villeDepCurr = data['geo' + i];
+                        if (villeDepLast
+                            && occurence[(villeDepLast.codepostal).substring(0, 2) + villeDepLast.ville] !== undefined
+                            && occurence[(villeDepLast.codepostal).substring(0, 2) + villeDepLast.ville] > 1
+                            && villeDepCurr.ville != villeDepLast.ville
+                        ){
+                            villes.push($.extend(true, villeDepLast, {
+                                'value': villeDepLast.codepostal.substring(0, 2) + ' ' + villeDepLast.ville,
+                                'text': villeDepLast.ville + ' (tous codes postaux ' + villeDepLast.codepostal.substring(0, 2) + ')',
+                                'data':{
+                                    'icon': 'glyphicon-map-marker',
+                                },
+                                'disabled': false
+                            }));
+                            delete occurence[(villeDepLast.codepostal).substring(0, 2) + villeDepLast.ville];
+                        }
+                        if (occurence[(data['geo' + i].codepostal).substring(0, 2) + data['geo' + i].ville] !== undefined){
+                            occurence[(data['geo' + i].codepostal).substring(0, 2) + data['geo' + i].ville] += 1;
+                        }else{
+                            occurence[(data['geo' + i].codepostal).substring(0, 2) + data['geo' + i].ville] = 1;
+                        }
+                        villeDepLast = data['geo' + i];
+                        villes.push(
+                                $.extend(true, data['geo' + i], {
+                                    'value': data['geo' + i].codepostal + ' ' + data['geo' + i].ville,
+                                    'text': data['geo' + i].ville + ' (' + data['geo' + i].codepostal + ')',
+                                    'data':{
+                                        'icon': 'glyphicon-map-marker',
+                                    },
+                                    'disabled': false
+                                })
+                        );
+                    }
+                    if (villeDepLast
+                        && occurence[(villeDepLast.codepostal).substring(0, 2) + villeDepLast.ville] !== undefined
+                        && occurence[(villeDepLast.codepostal).substring(0, 2) + villeDepLast.ville] > 1
+                    ){
+                        villes.push(
+                            $.extend(true, villeDepLast, {
+                                'value': villeDepLast.codepostal.substring(0, 2) + ' ' + villeDepLast.ville,
+                                'text': villeDepLast.ville + ' (tous codes postaux ' + villeDepLast.codepostal.substring(0, 2) + ')',
+                                'data':{
+                                    'icon': 'glyphicon-map-marker',
+                                },
+                                'disabled': false
+                            })
+                        );
+                        delete occurence[(villeDepLast.codepostal).substring(0, 2) + villeDepLast.ville];
+                    }
+                    return villes;
+                },
+                preserveSelected: false,
+                requestDelay: 600,
+            });
+
+            $('#villesauto').on('change', function(){
+                var selected = $(this).find("option:selected").attr('value');
+                if (selected){
+                    chercherVilles();
+                }
+            });
+
+            // ==================================================
+            // ENVOI FORMULAIRE ESTIMATION
+            // ==================================================
+
+            $(".alerteemail-form").on("submit", function(event){
+                event.preventDefault();
+                var params = {
+                    lang: "{{ LANG }}",
+                    urlpage: (document.URL).replace(".web-frontend.dev.twimmo.net", ""),
+                };
+                //twplugins.FormContactAlerteEmail(params);
+                var callbackSuccess = function(){
+                    console.log('envoyé');
+                    var maLangue = "{{ LANG }}";
+                    console.log(maLangue);
+
+                    $("#alerteemail-form-submit").text("{{ '#demandeenregistree'|translate|capitalize }}");
+                    $("#alerteemail-form-submit").addClass('disabled');
+                };
+                var textes = {};
+                textes.noCitiesTitle = '{{ '#aucunevillerecherchee'|translate|capitalize }}';
+                textes.noCitiesContent = '{{ '#merciderenseignerlesvillesrecherchees'|translate|capitalize }}';
+                textes.successTitle = '{{ '#alerteemailcreee'|translate|capitalize }}';
+                textes.successContent = '{{ '#alerteemailenregistree'|translate|e('js')|raw|capitalize }}';
+                textes.errorTitle = '{{ '#erreur'|translate|capitalize }}';
+                textes.errorContent = '{{ '#uneerreur'|translate|capitalize }}';
+                var retourForm =  twplugins.FormContactAlerteEmail(params, callbackSuccess, textes);
+            });
+        });
+    </script>
+{% endblock %}

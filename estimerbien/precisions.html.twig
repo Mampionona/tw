@@ -1,0 +1,127 @@
+<h2>{{ "#estimationprecise"|translate|capitalize }} <small>({{ "#infosfacultatives"|translate|capitalize }})</small></h2>
+
+<fieldset>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="surface">{{ "#surface"|translate|capitalize }}</label>
+                <div class="input-group">
+                    <input type="text" name="biensurface" class="form-control" id="surface" tabindex="16">
+                    <span class="input-group-addon">m&sup2;</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="terrain">{{ "#terrain"|translate|capitalize }}</label>
+                <input type="text" name="biensurfaceterrain" class="form-control" id="terrain" tabindex="17">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="etage">{{ "#etageouniveau"|translate|capitalize }}</label>
+                <input type="text" name="bienetage" class="form-control" id="etage" tabindex="18">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="construction" class="label-construction">{{ "#anneeconstruction"|translate|capitalize }}</label>
+                <input type="text" name="bienanneeconstruction" class="form-control" id="construction" tabindex="19">
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="form-group flex">
+        <legend>{{ "#etatgeneral"|translate|capitalize }}</legend>
+        <div class="radios">
+            <label>
+                <input type="radio" name="bienetatgeneral" id="excellent" value="excellent" unchecked tabindex="20">
+                {{ "#excellent"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienetatgeneral" id="bon" value="bon" tabindex="21">
+                {{ "#bon"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienetatgeneral" id="rafraichir" value="rafraichir" tabindex="22">
+                {{ "#rafraichir"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienetatgeneral" id="renover" value="renover" tabindex="23">
+                {{ "#renover"|translate|capitalize }}
+            </label>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="form-group flex">
+        <legend>{{ "#chauffage"|translate|capitalize }}</legend>
+        <div class="radios">
+            <label>
+                <input type="radio" name="bienchauffage" id="electrique" value="electrique" unchecked tabindex="24">
+                {{ "#electrique"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienchauffage" id="fuel" value="fuel" tabindex="25">
+                {{ "#fuel"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienchauffage" id="solaire" value="solaire" tabindex="26">
+                {{ "#solaire"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="radio" name="bienchauffage" id="gaz" value="gaz" tabindex="27">
+                {{ "#gaz"|translate|capitalize }}
+            </label>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="form-group flex">
+        <legend>{{ "#prestations"|translate|capitalize }}</legend>
+        <div class="radios">
+            <label>
+                <input type="checkbox" name="bienprestations[]" id="parking" value="parking" unchecked tabindex="28">
+                {{ "#parking"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="checkbox" name="bienprestations[]" id="garage" value="garage" tabindex="29">
+                {{ "#garage"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="checkbox" name="bienprestations[]" id="cave" value="cave" tabindex="30">
+                {{ "#cave"|translate|capitalize }}
+            </label>
+            <label>
+                <input type="checkbox" name="bienprestations[]" id="ascenseur" value="ascenseur" tabindex="31">
+                {{ "#ascenseur"|translate|capitalize }}
+            </label>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <div class="form-group flex">
+        <legend>{{ "#disponibilite"|translate|capitalize }}</legend>
+        <div class="radios">
+            <label>
+                <input type="radio" name="biendisponibilite" id="immediate" value="immediate" checked tabindex="32">
+                {{ "#immediate"|translate|capitalize }}
+            </label>
+            <div class="le">
+                <label>
+                    <input type="radio" name="biendisponibilite" id="dispo" value="le" tabindex="33">
+                    {{ "#le"|translate|capitalize }}
+                </label>
+                <div class='input-group' id='estimation-form-datetimepicker'>
+                    <input type="text" id="date-dispo" class="form-control estimation-form-date-dispo" value="" name="biendatedispo" tabindex="34">
+                    <span class="input-group-addon fa fa-calendar"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>

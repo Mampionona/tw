@@ -1,0 +1,181 @@
+.page-statique {
+  .form-control {
+    margin-right: 0;
+  }
+
+  .radios {
+    display: flex;
+
+    label {
+      font-weight: normal;
+      min-width: 130px;
+
+      @media all and (min-width: 992px) {
+        + label {
+          margin-left: 30px;
+        }
+      }
+
+      @media all and (min-width: 992px) and (max-width: 1199px) {
+        min-width: 120px;
+      }
+    }
+
+    @media all and (max-width: 991px) {
+      flex-direction: column;
+      margin-left: 15px;
+    }
+  }
+
+  .le {
+    @media all and (min-width: 992px) {
+      margin-left: 30px;
+    }
+
+    label {
+      float: left;
+      margin-right: 12px;
+      min-width: initial;
+    }
+
+    .input-group {
+      max-width: 300px;
+    }
+  }
+
+  .flex {
+    display: flex;
+
+    legend {
+      font-weight: 700;
+      min-width: 200px;
+    }
+
+    @media all and (max-width: 991px) {
+      flex-direction: column;
+
+      legend {
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .float {
+    @media all and (min-width: 992px) {
+      label {
+        float: left;
+        height: 34px;
+        line-height: 34px;
+      }
+    }
+  }
+
+  .form-submit {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .coordonnees {
+    textarea {
+      height: 133px;
+    }
+  }
+
+  .submit {
+    background: $brand-primary;
+    color: $white;
+    // font-size: 18px;
+
+    &:hover {
+      background: $white;
+      color: $rollover;
+    }
+
+    @media all and (max-width: 767px) {
+      font-size: 15px;
+      min-width: initial;
+      width: 100%;
+    }
+  }
+
+  .loi {
+    margin-top: 30px;
+  }
+}
+
+.estimation-content {
+  .form-control {
+    border: 0;
+  }
+}
+
+.alerteemail-form {
+  .coordonnees,
+  .votre-recherche,
+  .righttxt {
+    label {
+      min-width: 200px;
+    }
+  }
+
+  .checkbox-categorie {
+    display: flex;
+
+    .checkboxes {
+      + .checkboxes {
+        margin-left: 30px;
+      }
+    }
+
+    label {
+      min-width: initial;
+    }
+  }
+
+  .form-control {
+    border: 0;
+  }
+
+  .distance {
+    display: flex;
+    width: 100%;
+
+    button {
+      background: transparent;
+      border: 0;
+      color: $footer-text-color;
+      outline: 0;
+    }
+
+    button[id="elargirmoins"] {
+      padding-right: 30px;
+    }
+
+    button[id="elargirplus"] {
+      padding-left: 30px;
+    }
+
+    input {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  @media all and (min-width: 992px) {
+    .flex {
+      align-items: center;
+    }
+  }
+}
+
+.contact-pref {
+  background: rgba($white, .1);
+  padding: 20px 15px;
+}
+
+.estimation,
+.alerte {
+  .submit {
+    min-width: 340px;
+  }
+}

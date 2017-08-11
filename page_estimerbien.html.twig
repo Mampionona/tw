@@ -1,0 +1,102 @@
+{% extends('structure/layout.html.twig') %}
+
+{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
+{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+
+{% block linkCSS %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block classBody %}page-statique estimation{% endblock classBody %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-statique-content">
+                    <h1>{{ '#estimerbien'|translate }}</h1>
+                    <div class="estimation-content">
+                        <form class="estimation-form" action="" role="form">
+                            <input style="display:none;" type="text" id="testform1" name="testform1" value="25dV871c" />
+                            <input style="display:none;" type="text" id="testform2" name="testform2" value="" />
+                            <input style="display:none;" type="text" id="emailform2" name="emailform2" value="" />
+                            {#<div id="openModal" class="modalDialog">
+                                <div>
+                                    <a href="#close" title="Close" class="close">X</a>
+                                    {{"#messageconfirmationdemande"|translate|raw}}
+                                </div>
+                            </div>
+                            <legend>Vos coordonnées</legend>
+                            <p class="messageform">{{ "#messagevalide"|translate|capitalize }}</p>#}
+
+                            <div class="coordonnees">
+                                {% include 'structure/elements/estimerbien/coordonnees.html.twig' %}
+                            </div>
+
+                            <div class="description">
+                                {% include 'structure/elements/estimerbien/description.html.twig' %}
+                            </div>
+
+                            <div class="precisions">
+                                {% include 'structure/elements/estimerbien/precisions.html.twig' %}
+                            </div>
+
+                            <div class="form-group form-submit">
+                                <button type="submit" class="btn submit" tabindex="35">{{ "#envoyerestimation"|translate|capitalize }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+
+    {# Datetimepicker #}
+    <script src="/lib/moment/min/moment-with-locales.min.js"></script>
+    <script src="/lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js"></script>
+        <script  src="/default/lib/twimmo/twplugins-0.0.1.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function (){
+
+            // ==================================================
+            // INITIALISATION CALENDRIER DATETIMEPICKER
+            // ==================================================
+            $('#estimation-form-datetimepicker').datetimepicker({
+                locale: 'fr'
+            });
+
+            // ==================================================
+            // ENVOI FORMULAIRE ESTIMATION
+            // ==================================================
+
+                $(".estimation-form").on("submit",function(event){
+                    event.preventDefault();
+                    var params = {
+                        lang: "{{ LANG }}",
+                        urlpage: (document.URL).replace(".web-frontend.dev.twimmo.net", ""),
+                    };
+                    var callback = function(){};
+                    var textes = {};
+                    textes.successTitle = "{{ "#votredemande"|translate }}";
+                    textes.successContent = "{{ "#votredemandeenvoyee"|translate }}";
+                    textes.errorTitle = '{{ '#erreur'|translate|capitalize }}';
+                    textes.errorContent = '{{ '#uneerreur'|translate|capitalize }}';
+                    twplugins.FormContactEstimerBien(params, callback, textes);
+                });
+
+        });
+    </script>
+{% endblock %}

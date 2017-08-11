@@ -1,0 +1,53 @@
+<div class="coordonnees">
+    <h2>{{ "#voscoordonnees"|translate|capitalize }}</h2>
+    <fieldset>
+        <div class="form-group flex">
+            <label for="titre">{{ "#titre"|translate|capitalize }}*</label>
+            <select class="selectpicker form-control" required name="titre" id="titre">
+                <option>{{ "#aucunselect"|translate|capitalize }}</option>
+                <option value="M">{{ '#monsieur'|translate|capitalize}}</option>
+                <option value="MME">{{ '#madame'|translate|capitalize}}</option>
+                <option value="MME M">{{ '#madamemonsieur'|translate|capitalize}}</option>
+                <option value="MLE">{{ '#mademoiselle'|translate|capitalize}}</option>
+            </select>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <div class="form-group flex">
+            <label for="nom">{{ "#nom"|translate|capitalize }}*</label>
+            <input type="text" name="nom" id="nom" title="Veuillez renseigner votre nom." x-moz-errormessage="Veuillez renseigner votre nom." required placeholder="Nom (obligatoire)" class="form-control" tabindex="1">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <div class="form-group flex">
+            <label for="prenom">{{ "#prenom"|translate|capitalize }}</label>
+            <input type="text" name="prenom" id="prenom" title="Veuillez renseigner votre prenom." placeholder="Prenom" class="form-control" tabindex="1">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <div class="form-group flex">
+            <label for="mail">{{ "#email"|translate|capitalize }}</label>
+            <input type="email" name="email" id="mail" title="Veuillez renseigner votre E-mail." x-moz-errormessage="Veuillez renseigner votre E-mail." required placeholder="E-mail (obligatoire)" class="form-control" tabindex="1">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <div class="form-group flex">
+            <label for="port">{{ "#portable"|translate|capitalize }}</label>
+            <input type="text" name="portable" id="port" placeholder="{{ "#portable"|translate|capitalize }}" class="form-control" tabindex="1">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <div class="form-group flex">
+            <label for="tel">{{ "#telephone"|translate|capitalize }}</label>
+            <input type="text" name="telephone" id="tel" placeholder="Telephone" class="form-control" tabindex="1">
+        </div>
+    </fieldset>
+    <div class="required">
+        <p>* {{ "#obligatoire"|translate|capitalize }}</p>
+    </div>
+</div>
