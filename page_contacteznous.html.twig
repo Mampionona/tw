@@ -1,0 +1,313 @@
+{% extends('structure/layout.html.twig') %}
+{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
+{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+{% block metaKeywords %}{{include(template_from_string(param._meta.keywords|default("")))}}{% endblock %}
+{% block linkCSS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block classBody %}page-statique contactez-nous{% endblock classBody %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="contact-content">
+                    <h1>{{ tw.agence.nom }}</h1>
+                    <div class="adresse-formulaire bloc">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% include "structure/elements/adresse/adresse.html.twig" %}
+                                <div class="horaire">
+                                    {% if LANG == "fr" %}
+                                        {{ tw.contact.horairesContactezNousFr|raw|nl2br  }}
+                                    {% elseif LANG == "en" %}
+                                        {{ tw.contact.horairesContactezNousEn|raw|nl2br  }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                {% include "structure/elements/forms/contactagence/v1/form-contactagence-v1.html.twig" %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="texte bloc">
+                        {% if LANG == "fr" %}
+                            {{ tw.contact.textesContactezNousFr|raw }}
+                        {% elseif LANG == "en" %}
+                            {{ tw.contact.textesContactezNousEn|raw }}
+                        {% endif %}
+                    </div>
+
+                    <div class="quelques-photos">
+                        <div class="row">
+                            {% set files = ['IMG_2727.jpg', 'IMG_2743.jpg', 'IMG_2751.jpg'] %}
+                            {% for file in files %}
+                                <div class="col-md-4">
+                                    <figure>
+                                        <img src="{{ '/images/photos-agence/' ~ file }}" alt>
+                                    </figure>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="contactez-nous-carte bloc">
+                        <h2>{{ "#rendeznousvisite"|translate|capitalize }}</h2>
+                        <button class="btn contactez-nous-carte-hd-btn"><i class="icon-zoom fa fa-search-plus"></i><span class="sr-only">{{ "#cartehd"|translate|capitalize }}</span></button>
+
+                        <div class="contactez-nous-google-map">
+                            <div id="gmap"></div>
+                        </div>
+                    </div>
+
+                    <div class="biens-similaires bloc">
+                        {% set critereactus = {
+                            'ville' : tw.agence.ville,
+                            'ou' :[
+                                {'flagnew' : true},
+                                {'typemandat': 'exclusif'},
+                                {'date': {'$gte': getdatenouveaute()}},
+                                {'$and': [
+                                    {'prixvar': {'$lt':0}},
+                                    {'prixvardate': {'$gte': getdatenouveaute()}}
+                                ]}
+                            ],
+                            '@pagination': {"page" : 1,"nbreItems" : 12},
+                            '@tri' : {'date' : "desc"}
+                        } %}
+
+                        {% set donnee = {
+                            'titre': '#actualitesimmobilieres'|translate,
+                            'titresmall': '#baissesexclusivitesnouveautes'|translate,
+                            'ville' : tw.agence.ville,
+                            'id'   : 'actus',
+                            'class': 'slideshow',
+                            'items': requeteOffres(critereactus),
+                            'nbreAffiche': 12
+                        }
+                        %}
+
+                        {% include "structure/elements/slideshows/slides/v1/xs1-ms2-md4.html.twig" with donnee %}
+                    </div>
+
+                    <div class="contactez-nous-liens bloc">
+                        <h2>{{ '#immobilieraville'|translate(tw.agence.ville) }}</h2>
+                        <ul>
+                            <li>
+                                <a href="{{getRoutingMasque("masqueListingOffreVille",{'ville': 'cannes','type':'vente' })|creerlienstatique}}" title="{{ '#immobiliera'|translate|raw|capitalize }}				{% if LANG == "fr" %}
+                                {{ tw.agence.ville|raw|capitalize }}
+                                {% elseif LANG == "en" %}
+                                    {{ tw.agence.villeEn|raw|capitalize }}
+                                {% endif %}">{{ "#voirimmobiliera"|translate|raw|capitalize }} 				{% if LANG == "fr" %}
+                                        {{ tw.agence.ville|raw}}
+                                    {% elseif LANG == "en" %}
+                                        {{ tw.agence.villeEn|raw }}
+                                    {% endif %}</a>
+                            </li>
+                            <li>
+                                <a href="{{getRoutingMasque("masqueListingOffreTypeCategorieVille",{'ville':  "cannes",'type':'vente','categorie':'appartement' })|creerlienstatique}}" title="{{ '#venteappartementa'|translate|raw|capitalize }} {{ tw.agence.ville }}">
+                                    {{ "#voirventeappartementa"|translate|raw|capitalize }}
+                                    {% if LANG == "fr" %}
+                                        {{ tw.agence.ville|raw}}
+                                    {% elseif LANG == "en" %}
+                                        {{ tw.agence.villeEn|raw }}
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li><a href="{{getRoutingMasque("masqueListingOffreTypeCategorieVille",{'ville':  "cannes",'type':'vente','categorie':'maison' })|creerlienstatique}}" title="{{ '#ventevillaa'|translate|raw|capitalize }}
+                            {% if LANG == "fr" %}
+                                {{ tw.agence.ville|raw }}
+                            {% elseif LANG == "en" %}
+                                {{ tw.agence.villeEn|raw }}
+                            {% endif %}">{{ "#voirventevillaa"|translate|raw|capitalize }} 				{% if LANG == "fr" %}
+                                        {{ tw.agence.ville|raw }}
+                                    {% elseif LANG == "en" %}
+                                        {{ tw.agence.villeEn|raw }}
+                                    {% endif %}</a></li>
+
+
+                            {% set critere = {
+                                    'ville' : 'antibes',
+                                    '@groupby': [
+                                    "secteur"
+                                ],
+                                '@tri' : {
+                                    'count' : "desc"
+                                },
+                                '@pagination': {
+                                    "page"      : 1,
+                                    "nbreItems" : 10,
+                                }
+                            } %}
+
+                            {% set criteretotal = {
+                                'ville' : 'antibes',
+                                '@groupby': [
+                                    "secteur"
+                                ],
+                                '@tri' : {
+                                    'count' : "desc"
+                                }
+                            } %}
+
+                            {% set datas = groupOffres(critere) %}
+                            {% set datastotal = groupOffres(criteretotal) %}
+                            {% set countItem = 0 %}
+                            {% for item in datas if countItem < 8  %}
+                                {%  if item.secteur is defined and item.secteur != ''  %}
+                                    <li><a title="{{ "#immobilier"|translate|capitalize }} Cannes {{ item.secteur }}" href="{{ getRoutingMasque("masqueListingOffreVilleSecteur",{'ville':  'mougins', 'categorie': "#appartement"|translate, 'type': "#venteurl"|translate, 'secteur': item.secteur })|creerlienstatique }}"> {{ "#nossecteursa"|translate|capitalize }} Mougins {{ item.secteur }}</a></li>
+                                    {% set countItem = countItem + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if datastotal|length > 0 %}
+                                <li><a href="immobilier-tous+secteurs.html"><span>{{ "#tousnos"|translate|capitalize }}  {{ datastotal|length }} {{ "#secteurs"|translate }}</span></a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+    {# Fancybox pour les photos de l'agence et la carte en HD #}
+    {# Mousewheel plugin (this is optional) #}
+    <script  src="/lib/fancybox/jquery.mousewheel-3.0.6.pack.js"></script>
+    <script  src="/lib/fancybox/jquery.fancybox.js?v=2.1.5"></script>
+    {# Google Map API #}
+    {#
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    #}
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBffv1UHrAN3AfEJSwHy9-dzpJd2ei8WF8"></script>
+
+    <script  src="/default/lib/twimmo/twplugins-0.0.1.js"></script>
+
+
+    <script language="javascript">
+
+        $(document).ready(function (){
+
+            // ==================================================
+            // FORMULAIRE DE CONTACT
+            // ==================================================
+
+            $(".contact-form").on("submit",function(event){
+                event.preventDefault();
+                var params = {
+                    lang: "{{ LANG }}",
+                    urlpage: (document.URL).replace(".web-frontend.dev.twimmo.net", ""),
+                };
+                var callback = function(){};
+                var textes = {};
+                textes.successTitle = "{{ "#votredemande"|translate }}";
+                textes.successContent = "{{ "#votredemandeenvoyee"|translate }}";
+                textes.errorTitle = "{{ "#erreur"|translate }}";
+                textes.errorContent = "{{ "#erreursurvenue"|translate }}";
+
+                twplugins.FormContactSite(params, callback, textes);
+            });
+        });
+
+        // ==================================================
+        // PHOTOS AGENCE EN HD VIA FANCYBOX
+        // ==================================================
+        $('.contactez-nous-liste-photos a').fancybox();
+        // $('#photo-agence-HD').click(
+        //     function() {
+        //         $('#agence-photos a:first').click();
+        //         return false;
+        //     });
+
+        // ==================================================
+        // GOOGLE MAP
+        // ==================================================
+
+        var marker;
+        var agenceCoordonneesGeo = new google.maps.LatLng('{{ tw.agence.latitude }}','{{ tw.agence.longitude }}');
+        var contentString =
+            '<p class="contactez-nous-google-map-title">{{ tw.agence.nom }}</p>'+
+            '<p class="contactez-nous-google-map-content">{{ tw.agence.adresse }} <br />{{ tw.agence.cp }} {{ tw.agence.ville }} <br />{{ "#tel"|translate }} {{ tw.agence.tel }}{% if tw.agence.portable %} ou {{ tw.agence.portable }}{% endif %}</p>';
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+
+        function initializeGmap() {
+
+            var goo = google.maps;
+            var  mapOptions = {
+                zoom: 10,
+                center: agenceCoordonneesGeo,
+                mapTypeId: goo.MapTypeId.ROADMAP,
+                //disableDefaultUI:true
+            }
+            var map = new goo.Map(document.getElementById('gmap'), mapOptions);
+
+            marker = new goo.Marker({
+                map:map,
+                animation: goo.Animation.DROP,
+                position: map.getCenter()
+            });
+            // goo.event.addListener(marker, 'click', toggleBounce);
+            goo.event.addListener(marker, 'click', function() {
+                infowindow.open(map,marker);
+            });
+
+            $('.contactez-nous-carte-hd-btn').click(function () {
+                $.fancybox(map.getDiv(),
+                    {
+                        width: "100%",
+                        height: "100%",
+                        margin:50,
+                        autoSize: false,
+                        afterShow: function (a, z) {
+                            map.setOptions({
+                                // disableDefaultUI: false
+                            })
+                            goo.event.trigger(map, 'resize');
+                            map.setCenter(this.content.data('center'));
+                        },
+                        beforeLoad: function (a) {
+                            this.content.data({
+                                parent: this.content.parent(),
+                                center: map.getCenter()
+                            })
+                        },
+                        beforeClose: function () {
+                            this.content.data({
+                                center: map.getCenter()
+                            })
+                        },
+                        afterClose: function () {
+                            map.setOptions({
+                                // disableDefaultUI: true
+                            })
+                            this.content.appendTo(this.content.data('parent')).show();
+                            goo.event.trigger(map, 'resize');
+                            map.setCenter(this.content.data('center'));
+                        }
+                    });
+            });
+        }
+
+        /*function toggleBounce() {
+
+         if (marker.getAnimation() != null) {
+         marker.setAnimation(null);
+         } else {
+         marker.setAnimation(google.maps.Animation.BOUNCE);
+         }
+         }*/
+
+        google.maps.event.addDomListener(window, 'load', initializeGmap);
+
+    </script>
+{% endblock %}
