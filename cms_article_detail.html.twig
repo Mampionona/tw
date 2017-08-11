@@ -1,0 +1,148 @@
+{% extends('structure/layout.html.twig') %}
+
+{% block classBody %}page-statique parutions{% endblock classBody %}
+
+
+{% set titlearticle = '' %}
+{% for titre in article.titres %}
+     {% if titre.lang|lower == LANG|lower %}
+        {% set titlearticle = titre.contenu %}
+    {% endif %}
+{% endfor %}
+
+
+{% set contenuarticle = '' %}
+{% for titre in article.textes %}
+    {% if titre.lang|lower == LANG|lower %}
+        {% set contenuarticle = titre.contenu %}
+    {% endif %}
+{% endfor %}
+
+
+{% set datas = article.getData()|merge({'titre' : titlearticle}) %}
+
+{% set urlarticlecms = getRoutingMasque("masqueCmsDetails",datas)|creerlienstatique %}
+{% set pathphoto = pathphoto(article) %}
+
+{% if article.images|length > 0 %}
+
+    {% set paramdiapo = {
+        'photos': article.images,
+        'titlephoto' : titlearticle
+    } %}
+
+{% endif %}
+
+
+
+{% if contenuarticle %}
+    {% block metaTitle %}
+        {% if titlearticle %}
+            {{titlearticle}}
+        {%endif %}
+    {% endblock %}
+    {% block metaDescription %}
+        {% if contenuarticle %}
+            {{contenuarticle|striptags|truncate(210,'...')|capitalize}}
+        {%endif %}
+    {% endblock %}
+    {% block noIndex %}{% if contenuarticle == '' %}{{'no'}}{%endif %}{% endblock %}
+
+
+
+    {% block content %}
+
+    {% set urllistingparutions = getRoutingMasque("masqueCmsListing")|creerlienstatique %}
+
+    <div class="container main">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ "#infosimmos"|translate|capitalize }}</h1>
+                <section id="details" class="cms-article">
+                    <h2 class="titre-section">{{titlearticle|e}}</h2>
+                    <div class="nav-offre"></div>
+                    <!-- Diaporama -->
+
+                    <div class="row">
+                        {% if article.logo|length > 0 %}
+                            <div class="col-md-4">
+                                <figure>
+                                    <img class="img-responsive" src="{{ urlphotocms(article.logo) }}" alt="Photo n°{{ loop.index }} - {{titlephoto}}"/>
+                                </figure>
+                            </div>
+                        {% endif %}
+                        <div class="col-md-{% if article.logo|length > 0 %}8{% else %}12{% endif %}">
+                            <section id="detail-offre">
+                                <p class="desc">
+                                    {% autoescape false %}
+                                        {{ contenuarticle|striptags|raw|nl2br  }}
+                                    {% endautoescape %}
+                                </p>
+                            </section>
+                        </div>
+                    </div>
+
+                    <!-- Detail Offre -->
+
+                </section>
+                <div id="retourliste" class="plan-site-header-back page-statique-back">
+                    <a class="parutions-lien" href="{{ urllistingparutions }}">{{ "#parutions"|translate|capitalize }} >></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+{% endif %}
+
+{% block bottomJS %}
+{{ parent() }}
+<!-- Pikachoose pour le diaporama : utilise FancyBox2 pour afficher la lightbox HD -->
+<script  src="/lib/pikachoose/jquery.jcarousel.min.js"></script>
+<script  src="/lib/pikachoose/jquery.pikachoose.min.js"></script>
+<script  src="/lib/pikachoose/jquery.touchwipe.min.js"></script>
+
+<!-- Fancybox pour la lightbox HD du diaporama -->
+<!-- Mousewheel plugin (this is optional) -->
+<script  src="/lib/fancybox/jquery.mousewheel-3.0.6.pack.js"></script>
+<script  src="/lib/fancybox/jquery.fancybox.js?v=2.1.5"></script>
+
+<script language="javascript">
+    $(document).ready(function (){
+
+        // Fancybox gallery pour la lightbox HD du diaporama
+        var fancyGallery = []; // fancybox gallery group
+        var fancy = function (self) {
+            // bind click event to big image
+            self.anchor.on("click", function(e){
+                // find index of corresponding thumbnail
+                var pikaindex = $("#pikame").find("li.active").index();
+                // open fancybox gallery starting from corresponding index
+                $.fancybox(fancyGallery,{
+                    // fancybox options
+                    "index": pikaindex, // start with the corresponding thumb idex
+                });
+                return false;
+            }); // on click
+        }
+        // build fancybox group
+        $("#pikame").find("a").each(function(i){
+            // build fancybox gallery
+            fancyGallery[i] = {"href" : this.href, "title" : this.title};
+        }).end().PikaChoose({
+            carousel:true,
+            carouselVertical:true,
+            showCaption:false,
+            // bind fancybox to big images elements after pikachoose is built
+            buildFinished: fancy
+        });
+
+
+        $("#diaporama .btn-zoom").click(function(){
+            $(".pika-stage img").click();
+        });
+        $(".icons-photos button").click(function(){
+            $(".pika-stage img").click();
+        });
+    });
+</script>
+{% endblock %}

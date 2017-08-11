@@ -1,0 +1,173 @@
+{% extends('structure/layout.html.twig') %}
+
+{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
+{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+
+{% block linkCSS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block classBody %}page-statique gestion_locative{% endblock classBody %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-statique-content">
+                    <h1>{{ "#gestionlocative"|translate|capitalize }}</h1>
+                    <div class="right">
+                       {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.textePresentationGestionLocavieFr|translate|raw }}
+                        {% else %}
+                            {{ tw.gestionlocative.textePresentationGestionLocavieEn|translate|raw }}
+                        {% endif %}
+
+                      {# <ol>
+                        <li>
+                        {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre1GestionLocativeFr|translate|raw }}
+                        {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre1GestionLocativeEn|translate|raw }}
+                        {% endif %}
+                          <ul>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste1GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste1GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre2GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre2GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          <ul>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste2GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste2GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre3GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre3GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre4GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre4GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          <ul>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste4GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste4GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre5GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre5GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          <ul>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste5GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste5GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre6GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre6GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          <ul>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste6GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste6GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre7GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre7GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          <ul>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste7GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste7GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                        <li>
+                          {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.titre8GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.titre8GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          <ul>
+                            {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.liste8GestionLocativeFr|translate|raw }}
+                          {% elseif LANG == "en" %}
+                            {{ tw.gestionlocative.liste8GestionLocativeEn|translate|raw }}
+                          {% endif %}
+                          </ul>
+                        </li>
+                      </ol> #}
+                        {% if LANG == "fr" %}
+                            {{ tw.gestionlocative.texteFinGestionLocativeFr|translate|raw }}
+                        {% else %}
+                            {{ tw.gestionlocative.texteFinGestionLocativeEn|translate|raw }}
+                        {% endif %}
+                    </div>
+
+                    {% set critereactus = {
+                           'type' : 'location',
+                           '@pagination': {
+                               "page" : 1,
+                               "nbreItems" : 10
+                           },
+                           '@tri' : {
+                               'date' : "desc"
+                           }
+                       }
+                   %}
+
+                   {% set donnee = {
+                           'titresmall': '#locations'|translate,
+                           'id'   : 'actus',
+                           'class': 'slideshow',
+                           'items': requeteOffres(critereactus),
+                           'nbreAffiche': 12
+                       }
+                   %}
+
+                   {% include "structure/elements/slideshows/slides/v1/xs1-ms2-md4.html.twig" with donnee %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+{% endblock %}

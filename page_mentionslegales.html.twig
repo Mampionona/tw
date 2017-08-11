@@ -1,0 +1,80 @@
+{% extends('structure/layout.html.twig') %}
+
+{% if LANG == 'fr' %}
+    {% set metaTitle = 'Mentions légales - ' ~ tw.agence.nomFr ~ ' - ' ~ tw.agence.villes %}
+    {% set metaDescription = metaTitle %}
+    {% set metaKeywords = metaTitle %}
+{% else %}
+    {% set metaTitle = 'Legal notice - ' ~ tw.agence.nomEn ~ ' - ' ~ tw.agence.villes %}
+    {% set metaDescription = metaTitle %}
+    {% set metaKeywords = metaTitle %}
+{% endif %}
+
+{% block metaTitle %}{{ metaTitle }}{% endblock %}
+{% block metaDescription %}{{ metaDescription }} {% endblock %}
+{% block metaKeywords %}{{ metaKeywords }}{% endblock %}
+
+{% block linkCSS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block classBody %}page-statique mentions-legales{% endblock classBody %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <section class="mentions-legales-content">
+                    <h1>Mentions légales</h1>
+                    <h2>SARL CRISTAL</h2>
+                    <p><strong>SARL au capital de {{ 10000|formatCurrency }}</strong></p>
+                    <p><strong>APE :</strong> 6831 Z Agence Immobilière</p>
+                    <p><strong>Siège Social :</strong> 49 AVENUE DE LA REPUBLIQUE  13310 ST MARTIN DE CRAU</p>
+                    <p><strong>Identifiant SIREN :</strong> 825 123 631</p>
+                    <p><strong>Identifiant SIRET du Siège :</strong> 825 123 631 00012</p>
+                    <p><strong>Etablissement secondaire :</strong> 34 RUE DES PRAIRIES  13310 ST MARTIN DE CRAU</p>
+                    <p>
+                        Transaction, location :<br>
+                        <strong>Carte professionnelle N° 1301.2017.000.016.063 délivrée par le CCI d’Arles à</strong> Jérôme PAUNER (Gérant)
+                    </p>
+                    <p><strong>Responsabilité Civile Professionnelle : MMA ENTREPRISES.</strong></p>
+                    <p><strong>Numéro de contrat : 143895755</strong></p>
+
+                    <h2>Médiation des litiges de la consommation</h2>
+                    <p>
+                        Tout consommateur a le droit de recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d'un litige
+                        qui l'oppose à un professionnel, est garantit au consommateur le recours effectif à un dispositif de médiation de la consommation,
+                        en vertu des articles L 152 - 1 et suivants ; vous pouvez trouver les coordonnées du médiateur sectoriel sur
+                        <a href="http:/www.economie.gouv.fr/mediation-conso">http:/www.economie.gouv.fr/mediation-conso</a>.
+                    </p>
+
+                    <h2>Honoraires Location à partir du 30/01/2017</h2>
+                    <p><em>Honoraires charge bailleur exclusivement :</em></p>
+                    <ul>
+                        <li>Honoraires de négociation forfait de : {{ 185|formatCurrency }}.</li>
+                    </ul>
+                    <p><em>Honoraires partagés charge bailleur pour moitié et charge locataire pour moitié.</em></p>
+                    <ul>
+                        <li>{{ 3|formatCurrency }} / m&sup2; pour l'établissement de l'état des lieux d'entrée</li>
+                        <li>
+                            et pour les autres types de frais : visites, constitution du dossier et rédaction du bail (hors état des lieux) :
+                            <ul>
+                                <li>{{ 12|formatCurrency }} / m&sup2; dans les zones au marché locatif très tendu (zone A bis Duflot et PTZ)</li>
+                                <li>{{ 10|formatCurrency }} / m&sup2; dans les zones au marché locatif tendu (communes où s'applique l'encadrement Duflot des loyers et la taxe sur les logements vacants, hors zone Abis)</li>
+                                <li>{{ 8|formatCurrency }} / m&sup2; dans les autres zones.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+{% endblock %}

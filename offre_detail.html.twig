@@ -1,0 +1,551 @@
+{% extends('structure/layout.html.twig') %}
+
+
+{% set descriptionPage = descriptionpageoffre(offre.textes.commercial[LANG]|striptags|truncate(170)) %}
+
+{% block metaTitle %}{{include(template_from_string(param._meta.title))|normalizeSpace|raw}}{% endblock %}
+{% block metaDescription %}{{ descriptionPage }}{% endblock %}
+
+{% block linkCSS %}
+    {{ parent() }}
+    {#==== CSS ROYAL SLIDER DIAPORAMA ====#}
+    <link rel="stylesheet" href="/lib/royalslider/royalslider.css">
+    <link rel="stylesheet" href="/lib/royalslider/skins/universal/rs-universal.css">
+    {# Map #}
+    <link href="/default/lib/twcarte/css/Twcarte-v1.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block topJS %}
+    {{ parent() }}
+        {#==== INIT CARTE TWIMMO ====#}
+        <script type="text/javascript" src="http://api.twimmo.com/scriptjs/1-434637352b5aa08da6a886b9fcb8ee9a/apitwimmo.js"></script>
+        <script type="text/javascript" >
+            Twi.require("carte");
+        </script>
+{% endblock %}
+
+{% block ogImage %}{{pathphoto(offre)}}{{ offre.photos[0].keymongo }}/moyenne/photo.jpg{% endblock %}
+
+{% block classBody %}offre{% endblock %}
+
+{% block content %}
+
+
+
+<section class="detail">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 pl30 pr30">
+
+                {#==== DETAIl OFFRE ====#}
+
+                {#==== HEADER | PAGE PRECEDENTE - REF OFFRE - TITRE PAGE ====#}
+                <div class="detail-header">
+                    <!-- <a class="detail-header-back btn-back btn btn-default btn-sm" href="javascript:window.history.go(-1);">{{ "#pageprecedente"|translate|capitalize }}</a> -->
+                    <h1>
+                        <strong>{{ offre.type|e|translate|capitalize }} {{ offre.nature|lower|translate }}</strong>
+                        <span class="hidden-xs hidden-ms visible-sm-inline">-</span>
+                        <br class="visible-xs-inline visible-ms-inline">
+                        {{ offre.webville }}
+                        {% if offre.webcp is defined %}({{ offre.webcp }}){% endif %}
+                        - {{ "#ref"|translate }} {{ offre.reference }}
+                    </h1>
+                </div>
+
+                {#==== DIAPORAMA ====#}
+                {% if offre.photos|length > 0 %}
+                    {% set paramdiapo = {
+                        'photos': offre.photos,
+                        'pathphoto' : pathphoto(offre),
+                        'titlephoto' : titlePage
+                    } %}
+
+                    {% include "structure/elements/detail/diaporama/v1/diaporama.html.twig" with paramdiapo %}
+
+                {% endif %}
+
+                {#==== OUTILS | PDF - PHOTOS HD - PARTAGE - CALCULETTE - SURFACE - FB-TW-FAVORIS ====#}
+                {% include "structure/elements/detail/tools/v1/tools.html.twig" %}
+
+                {#==== DETAIL DE L'OFFRE ====#}
+                <div class="detail-offre-content">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="offre-descriptif">
+                                {#==== LABELS ====#}
+                                {% if iscoupdecoeur(offre) or isnew(offre)  or offre.mandattype=='exclusif' or islowerprices(offre) %}
+                                    {% set module = { 'class': 'detail-offre' } %}
+                                    {% include "structure/elements/labels/labels-v1.html.twig" with module %}
+                                {% endif %}
+
+                                {#==== TITRE ====#}
+                                <h3 class="detail-offre-titre">
+                                    {{ offre.nature|translate|capitalize }}
+                                    {{ offre.webville }}
+                                    <span>
+                                        {% if offre.websecteur is defined and offre.websecteur %}{{ offre.websecteur|translate|capitalize }}, {% endif %}
+                                        {% if offre.type|e|lower == "vente" %}{{ "#achat"|translate }} {% else %}{{ ("#" ~ offre.type)|translate|e|capitalize }} {% endif %}{{ (offre.nature)|translate|lower }}
+                                        {% if offre.categorie|lower == "maison" and offre.nbchambres is defined and offre.nbchambres %}
+                                            {{ "#nbchambre"|translate(offre.nbchambres) }}
+                                        {% elseif offre.npieces is defined and offre.npieces %}
+                                            {{ "#nbpiece"|translate(offre.npieces) }}
+                                        {% endif %}
+                                        {% if offre.surface is defined and offre.surface %} {{ offre.surface|round(0, 'floor') }}&nbsp;m&sup2;{% endif %}
+                                    </span>
+                                </h3>
+
+                                {#==== PRIX ====#}
+                                <p class="detail-offre-prix">
+                                    {% if offre.nousconsulter == 1 or offre.webprix == 0 %}
+                                        {{ "#prixsurdemande"|translate|capitalize }}
+                                    {% else %}
+                                        {% if offre.type=='location' %}
+                                            {{ offre.webprix|number_format(0, ',', ' ')}} &euro; <small>/ {{"#mois"|translate }}</small>
+                                        {% else %}
+                                            {{ offre.webprix|number_format(0, ',', ' ')}} &euro;* {# <small>{{"#fai"|translate }}</small> #}
+                                        {% endif %}
+                                    {% endif %}
+                                </p>
+                                {% if offre.nousconsulter != 1 and offre.webprix != 0 %}
+                                    {#==== DEVISES ====#}
+                                    <ul class="detail-offre-liste-devises">
+                                        <li class="detail-offre-devise">{{ (offre.webprix|number_format(0, ',', ''))|devise('us')|number_format(0, ',', ' ')}} $</li>
+                                        <li class="detail-offre-devise">{{ offre.webprix|number_format(0, ',', '')|devise('uk')|number_format(0, ',', ' ')}} £</li>
+                                        <li class="detail-offre-devise dropdown">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" role="button">{{ "#autresdevises"|translate|capitalize }} <span class="caret"></span></a>
+                                            <ul class="detail-offre-liste-autres-devises dropdown-menu" role="menu" aria-labelledby="Autres devises">
+                                                <li class="detail-offre-autre-devise"><span class="flag-icon flag-icon-ru"></span> {{ offre.webprix|number_format(0, ',', '')|devise('ru')|number_format(0, ',', ' ')}} руб</li>
+                                                <li class="detail-offre-autre-devise"><span class="flag-icon flag-icon-se"></span> {{ offre.webprix|number_format(0, ',', '')|devise('se')|number_format(0, ',', ' ')}} kr</li>
+                                                <li class="detail-offre-autre-devise"><span class="flag-icon flag-icon-cn"></span> {{ offre.webprix|number_format(0, ',', '')|devise('cn')|number_format(0, ',', ' ')}} 元</li>
+                                                <li class="detail-offre-autre-devise"><span class="flag-icon flag-icon-jp"></span> {{ offre.webprix|number_format(0, ',', '')|devise('jp')|number_format(0, ',', ' ')}} ¥</li>
+                                                <li class="detail-offre-autre-devise"><span class="flag-icon flag-icon-ch"></span> {{ offre.webprix|number_format(0, ',', '')|devise('ch')|number_format(0, ',', ' ')}} Chf</li>
+                                                <li class="detail-offre-autre-devise"><small>Informations non contractuelles</small></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                {% endif %}
+
+                                {#==== TEXTE ====#}
+                                <p class="detail-offre-texte">
+                                    {% autoescape false %}
+                                        {{ offre.textes.commercial[LANG]|raw|nl2br }}
+                                    {% endautoescape %}
+                                </p>
+
+                                {#==== CARACTERISTIQUES ====#}
+                                <div class="detail-offre-caracteristiques">
+                                    <h4 class="detail-offre-sous-titre">{{ "#caracteristiques"|translate|capitalize }}</h4>
+                                    <ul class="detail-offre-liste-caracteristiques">
+
+                                        {% if offre.typemaison %}
+                                            <li class="detail-offre-caracteristique">{{ "#typemaison"|translate|capitalize }} : {{ offre.typemaison|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.surfacesejour  > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#surfacesejour"|translate|capitalize }} : {{ offre.surfacesejour|round(0, 'floor') }}&nbsp;m&sup2;</li>
+                                        {% endif %}
+                                        {% if offre.surfaceterrain > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#surfaceterrain"|translate|capitalize }} : {{ offre.surfaceterrain|round(0, 'floor') }}&nbsp;m&sup2;</li>
+                                        {% endif %}
+                                        {% if offre.cos > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#cos"|translate|capitalize }} : {{ offre.cos|number_format(0, ',', ' ') }}&nbsp;%</li>
+                                        {% endif %}
+                                        {% if offre.aspectterrain %}
+                                            <li class="detail-offre-caracteristique">{{ "#aspectterrain"|translate|capitalize }} : {{ offre.aspectterrain|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.construiten   %}
+                                            <li class="detail-offre-caracteristique">{{ "#anneeconstruction"|translate|capitalize }} : {{ offre.construiten }}</li>
+                                        {% endif %}
+                                        {% if offre.exposition    %}
+                                            <li class="detail-offre-caracteristique">{{ "#exposition"|translate|capitalize }} : {{ offre.exposition|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.vue           %}
+                                            <li class="detail-offre-caracteristique">{{ "#vue"|translate|capitalize }} : {{ offre.vue|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.eauchaude     %}
+                                            <li class="detail-offre-caracteristique">{{ "#eauchaude"|translate|capitalize }} : {{ offre.eauchaude|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.typechauffage %}
+                                            <li class="detail-offre-caracteristique">{{ "#chauffage"|translate|capitalize }} : {{ offre.typechauffage|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.etatinterieur %}
+                                            <li class="detail-offre-caracteristique">{{ "#etatinterieur"|translate|capitalize }} : {{ offre.etatinterieur|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.etatgeneral   %}
+                                            <li class="detail-offre-caracteristique">{{ "#etatgeneral"|translate|capitalize }} : {{ offre.etatgeneral|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.etatexterieur %}
+                                            <li class="detail-offre-caracteristique">{{ "#etatexterieur"|translate|capitalize }} : {{ offre.etatexterieur|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.standing      %}
+                                            <li class="detail-offre-caracteristique">{{ "#standing"|translate|capitalize }} : {{ offre.standing|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.etatimmeuble  %}
+                                            <li class="detail-offre-caracteristique">{{ "#etatimmeuble"|translate|capitalize }} : {{ offre.etatimmeuble|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.facademaison  %}
+                                            <li class="detail-offre-caracteristique">{{ "#facade"|translate|capitalize }} : {{ offre.facademaison|translate }}</li>
+                                        {% endif %}
+                                        {% if offre.couverture    %}
+                                            <li class="detail-offre-caracteristique">{{ "#couverture"|translate|capitalize }} : {{ offre.couverture|translate }}</li>
+                                        {% endif %}
+
+                                    </ul>
+
+                                    <ul class="detail-offre-liste-caracteristiques">
+
+                                        {% if offre.nbchambres is defined and offre.nbchambres > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbchambre"|translate(offre.nbchambres) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbterrasses is defined and offre.nbterrasses > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbterrasse"|translate(offre.nbterrasses) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbsallesdebains is defined and offre.nbsallesdebains > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbsdb"|translate(offre.nbsallesdebains) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbsallesdedouches is defined and offre.nbsallesdedouches > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbsdd"|translate(offre.nbsallesdedouches) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbtoilettes is defined and offre.nbtoilettes > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbtoilette"|translate(offre.nbtoilettes) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbgarages is defined and offre.nbgarages > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbgarage"|translate(offre.nbgarages) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbparkings is defined and offre.nbparkings > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbparking"|translate(offre.nbparkings) }}</li>
+                                        {% endif %}
+                                        {% if offre.nbcaves is defined and offre.nbcaves > 0 %}
+                                            <li class="detail-offre-caracteristique">{{ "#nbcave"|translate(offre.nbcaves) }}</li>
+                                        {% endif %}
+
+                                    </ul>
+                                </div>
+
+                                {#==== PRESTATIONS ====#}
+                                {% if offre.prestations|length > 0 %}
+
+                                    <div class="detail-offre-prestas-diverses">
+                                        <h4 class="detail-offre-sous-titre">{{ "#prestations"|translate|capitalize }}</h4>
+                                        <ul class="detail-offre-liste-prestations">
+                                            {% for prestation in offre.prestations|slice(0, 10) %}
+                                                <li class="detail-offre-prestation">{{ prestation|translate|e }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+
+                                {% endif %}
+
+                                {#==== FRAIS & CHARGES ====#}
+                                <div class="detail-offre-frais-charges">
+                                    {% set baremePrixUrl = getRoutingMasque('masqueBaremeDesPrix', {})|creerlienstatique %}
+
+                                    <h4 class="detail-offre-sous-titre">{{ '#informationslegales'|translate|capitalize }}</h4>
+                                    <p>
+                                        {{ '#honorairesdagence'|translate(175000|formatCurrency) }}<br>
+                                        <a href="{{ baremePrixUrl }}">{{ '#notrebaremedeprix'|translate|capitalize }}</a>
+                                    </p>
+                                </div>
+                                {# {% include 'Common/detail/fraischarges.html.twig' %} #}
+                            </div>
+                            <div class="detail-offre-infos-pratiques">
+                                <div id="infos-pratiques-accordion" class="panel-group" role="tablist" aria-multiselectable="true">
+                                    <h4 class="detail-offre-sous-titre">{{ "#infospratiques"|translate|capitalize }}</h4>
+
+                                    {# DPE | GES #}
+                                    <div class="panel">
+                                        <div class="panel-heading" role="tab" id="dpe-ges-titre">
+                                            <h5 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#infos-pratiques-accordion" href="#dpe-ges" aria-expanded="false" aria-controls="dpe-ges">
+                                                    <i class="icon-plus fa fa-plus-square"></i>
+                                                    <i class="icon-minus fa fa-minus-square"></i>
+                                                    {{ "#energiedpe"|translate|capitalize }}
+                                                    {% if offre.dpe > 0 %}
+                                                        {% set infosDpe = dpe(offre.dpe) %}
+                                                        {{ infosDpe.note }}
+                                                    {% endif %}
+                                                    - {{ "#energieges"|translate|capitalize }}
+                                                    {% if offre.ges > 0 %}
+                                                        {% set infosGes = ges(offre.ges) %}
+                                                        {{ infosGes.note }}
+                                                    {% endif %}
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div id="dpe-ges" class="panel-collapse collapse" role="tabpanel" aria-labelledby="dpe-ges-titre">
+                                            <div class="panel-body">
+                                                <div class="dpe-ges-img">
+                                                    <img src="{% if infosDpe.note is defined %}{{ infosDpe.img }}{% else %}/images/no-dpe.jpg{% endif %}" alt="{{ "#energiedpe"|translate|capitalize }}" />
+                                                </div>
+                                                <div class="dpe-ges-img">
+                                                    <img src="{% if infosGes.note is defined %}{{ infosGes.img }}{% else %}/images/no-ges.jpg{% endif %}" alt="{{ "#energieges"|translate|capitalize }}" />
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% include "structure/elements/forms/contactagence/v1/form-contactagence-v1.html.twig" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# MAP #}
+<section id="map-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-group">
+                    <div class="panel panel-default geolocalisation-biens">
+                        <div class="panel-heading">
+                            <h2>
+                                <span>{{ "#geolocapproxbiens"|translate|upper }}</span>
+                            </h2>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse in" {{ dataGeoLocMap(
+                            offre.getData(),
+                            urloffre,
+                            pathphoto,
+                            prixGeo,
+                            titleGeo,
+                            offre.webville ~ "<br/>" ~ offre.websecteur|translate|capitalize
+                        ) }}>
+                            {%include 'Info/Carte/Twcarte-v1.twig' with {'CONTAINERID' : "collapse1"} %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{#==== SLIDESHOW BIENS SIMILAIRES ====#}
+{# pour les données equivalents 'prix' : { '$range' : [0 , 1000000 ]}, #}
+{% set remisemin = offre.webprix * 0.7 %}
+{% set remisemax = offre.webprix * 1.15 %}
+{% set intitulerubrique = "#bienssimilaires"|translate|raw %}
+
+{% set critereequivalents = {
+    'type' : offre.type,
+    'categorie' : offre.categorie,
+    'ville' : offre.webville,
+    'cp' : offre.webcp,
+    'prix' : {'$range':[remisemin,remisemax]},
+    'id' : {'$notEqual':offre.id},
+    '@pagination': {
+        "page" : 1,
+        "nbreItems" : 12
+    },
+    '@tri' : {
+        'offredatecreation' : "desc"
+    }
+} %}
+{% set donnee = {
+    'titre': '#bienssimilaires'|translate,
+    'name' : 'sliderbiensimi',
+    'id'   : 'biens-similaires',
+    'class': 'slideshow',
+    'items': produitsEquivalents(critereequivalents),
+    'nbreAffiche': 12,
+    'rubriquepiwik': 'biensimilaire'
+} %}
+
+{% if donnee.items|length %}
+    <div class="container">
+        {% include "structure/elements/slideshows/slides/v1/xs1-ms2-md4.html.twig" with donnee %}
+    </div>
+ {% endif %}
+{# fin bien similaires#}
+
+{# <div class="about_actualite">  #}
+{#==== V1 - Content Référencement ====#}
+{# {% if param.ville != "" %}
+	{% if LANG == "fr" %}
+		{% include "structure/elements/detail/lastcontainer/lastcontainerdetail-v1.html.twig" %}
+	{%endif%}
+{%endif%}
+</div> #}
+
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+    {#==== JS ROYAL SLIDER DIAPORAMA ====#}
+    <script  src="/lib/royalslider/jquery.royalslider.min.js"></script>
+    <script  src="/default/lib/twimmo/twplugins-0.0.1.js"></script>
+
+    {# Fancybox pour la lightbox HD du diaporama #}
+    {# Mousewheel plugin (this is optional) #}
+    <script  src="/lib/fancybox/jquery.fancybox.js?v=2.1.5"></script>
+    <script  src="/lib/fancybox/jquery.mousewheel-3.0.6.pack.js"></script>
+
+    {# GOOGLE PARTAGE #}
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    {# Google map #}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{tw.global.carte.key}}&signed_in=true&libraries=places&callback=loadTwcarteDetail&language={{LANG}}" async defer></script>
+
+    {# Script page #}
+    <script language="javascript">
+        // ==================================================
+        // FACEBOOK PARTAGE
+        // ==================================================
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.3";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        // ==================================================
+        // TWITTER PARTAGE
+        // ==================================================
+        //window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
+
+        // ==================================================
+        // FAVORIS
+        // ==================================================
+        $(function() {
+            $('.btn-favoris').click(function() {
+                if (window.sidebar) { // Mozilla Firefox Bookmark
+                    window.sidebar.addPanel(document.title,window.location.href,'');
+                } else if(window.external && ('AddFavorite' in window.external)) { // IE Favorite
+                    window.external.AddFavorite(location.href,document.title);
+                } else if(window.opera && window.print) { // Opera Hotlist
+                    this.title=document.title;
+                    return true;
+                } else { // webkit - safari/chrome
+                    alert('Appuyez ' + (navigator.userAgent.toLowerCase().indexOf('mac') != - 1 ? 'Command/Cmd' : 'CTRL') + ' + D pour ajouter la page aux favoris.');
+                }
+            });
+
+
+            // ==================================================
+            // DIAPORAMA PHOTOS | PLUGIN ROYAL SLIDER
+            // ==================================================
+
+            $('#gallery').royalSlider({
+                fullscreen: {
+                    enabled: true,
+                    nativeFS: true
+                },
+                controlNavigation: 'thumbnails',
+                autoScaleSlider: true,
+//                autoScaleSliderWidth: false,
+//                autoScaleSliderHeight: false,
+                autoScaleSliderWidth: 1170,
+                autoScaleSliderHeight: 850,
+                loop: false,
+                imageScaleMode: 'fill',
+                navigateByClick: true,
+                numImagesToPreload: 4,
+                arrowsNav: true,
+                arrowsNavAutoHide: true,
+                arrowsNavHideOnTouch: true,
+                keyboardNavEnabled: true,
+                fadeinLoadedSlide: true,
+                globalCaption: false,
+                globalCaptionInside: false,
+                autoHeight: true,
+                thumbs: {
+                    appendSpan: true,
+                    firstMargin: true,
+                    paddingTop: 4,
+                    paddingBottom: 4
+                },
+            });
+
+//            $('#gallery').royalSlider({
+//                fullscreen: {
+//                    enabled: true,
+//                    nativeFS: true
+//                },
+//                controlNavigation: 'thumbnails',
+//                thumbs: {
+//                    orientation: 'vertical',
+//                    paddingBottom: 4,
+//                    appendSpan: true,
+//                    autoCenter: false,
+//                    width: 300
+//                },
+//                transitionType:'fade',
+//                autoScaleSlider: true,
+//                autoScaleSliderWidth: 820,
+//                //autoScaleSliderHeight: 800,
+//                loop: true,
+//                arrowsNav: false,
+//                keyboardNavEnabled: true
+//            });
+
+            // ==================================================
+            // FORMULAIRE DE CONTACT
+            // ==================================================
+            $(".contact-form").on("submit",function(event){
+                event.preventDefault();
+                var params = {
+                    agence: "{{ offre.agencedetails._id }}",
+                    lang: "{{ LANG }}",
+                    urlpage: "{{ PROTOCOLE }}{{ NDD }}{{ PATH }}",
+                    nomprenom: $(".contact-form #name").val(),
+                    texte: $(".contact-form #message").val(),
+                    telephone: $(".contact-form #tel").val(),
+                    email:$(".contact-form #mail").val(),
+                    idoffre: "{{ offre.idoffre }}",
+                    resumeannonce: "{{ resumeannonce(offre) }}",
+                    reference: "{{ offre.reference }}",
+                    typecategorie: "{{ offre.type }} {{ offre.nature }}",
+                    {% if offre.nousconsulter == 1 or offre.webprix == 0 %}
+                        prix: '0',
+                    {% else %}
+                        prix: "{{ offre.webprix|number_format(0, ',', ' ') }} &euro;"
+                    {% endif %}
+                };
+                var callback = function(){};
+                var textes = {};
+                textes.successTitle = "{{ "#votredemande"|translate }}";
+                textes.successContent = "{{ "#votredemandeenvoyee"|translate }}";
+                textes.errorTitle = "{{ "#erreur"|translate }}";
+                textes.errorContent = "{{ "#erreursurvenue"|translate }}";
+
+                twplugins.FormContactAgence(params, callback, textes);
+            });
+        });
+
+      //Tools
+        $(function() {
+            var param = {
+                "offre":{
+                    {% if offre.nousconsulter == 1 or offre.webprix == 0 %}
+                        prix: '0',
+                    {% else %}
+                        prix: "{{ offre.webprix|number_format(0, ',', '') }}",
+                    {% endif %}
+                    resumeannonce : "{{ resumeannonce(offre) }}",
+                    reference : "{{ offre.reference }}",
+                    typecategorie : "{{ offre.type }} {{ offre.nature }}",
+                    surface   : "{% if offre.surface is defined and offre.surface %}{{ offre.surface|number_format(0, ',', '') }}{% else %}0{% endif %}",
+                    surfaceterrain   : "{% if offre.surfaceterrain is defined and offre.surfaceterrain %}{{ offre.surfaceterrain|number_format(0, ',', '') }}{% else %}0{% endif %}"
+                },
+                "lang": "{{ LANG }}"
+            };
+
+            $("#btenvoyerami").on("click",function(){ twplugins.getParatagerAmi(param) });
+            $("#btmesurer").on("click",function(){ twplugins.getSurface(param) });
+            $("#btfinancer").on("click",function(){ twplugins.getFinance(param) });
+
+            $("#btphotoHD").on("click",function(){ $("#gallery .rsFullscreenBtn")[0].click(); });
+        });
+    </script>
+
+{% endblock %}

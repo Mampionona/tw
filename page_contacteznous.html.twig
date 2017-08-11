@@ -1,7 +1,21 @@
 {% extends('structure/layout.html.twig') %}
-{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
-{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
-{% block metaKeywords %}{{include(template_from_string(param._meta.keywords|default("")))}}{% endblock %}
+
+{% set Contact = tw.contact %}
+
+{% if LANG == 'fr' %}
+    {% set metaTitle = Contact.metaTitleContactezNousFr %}
+    {% set metaDescription = Contact.metaDescriptionContactezNousFr %}
+    {% set metaKeywords = Contact.metaKeywordContactezNousFr %}
+{% else %}
+    {% set metaTitle = Contact.metaTitleContactezNousEn %}
+    {% set metaDescription = Contact.metaDescriptionContactezNousEn %}
+    {% set metaKeywords = Contact.metaKeywordContactezNousEn %}
+{% endif %}
+
+{% block metaTitle %}{{ metaTitle }}{% endblock %}
+{% block metaDescription %}{{ metaDescription }}{% endblock %}
+{% block metaKeywords %}{{ metaKeywords }}{% endblock %}
+
 {% block linkCSS %}
     {{ parent() }}
 {% endblock %}
@@ -100,7 +114,7 @@
                         <h2>{{ '#immobilieraville'|translate(tw.agence.ville) }}</h2>
                         <ul>
                             <li>
-                                <a href="{{getRoutingMasque("masqueListingOffreVille",{'ville': 'cannes','type':'vente' })|creerlienstatique}}" title="{{ '#immobiliera'|translate|raw|capitalize }}				{% if LANG == "fr" %}
+                                <a href="{{getRoutingMasque("masqueListingOffreVille",{'ville': tw.agence.ville,'type':'vente' })|creerlienstatique}}" title="{{ '#immobiliera'|translate|raw|capitalize }}				{% if LANG == "fr" %}
                                 {{ tw.agence.ville|raw|capitalize }}
                                 {% elseif LANG == "en" %}
                                     {{ tw.agence.villeEn|raw|capitalize }}
@@ -111,7 +125,7 @@
                                     {% endif %}</a>
                             </li>
                             <li>
-                                <a href="{{getRoutingMasque("masqueListingOffreTypeCategorieVille",{'ville':  "cannes",'type':'vente','categorie':'appartement' })|creerlienstatique}}" title="{{ '#venteappartementa'|translate|raw|capitalize }} {{ tw.agence.ville }}">
+                                <a href="{{getRoutingMasque("masqueListingOffreTypeCategorieVille",{'ville':  tw.agence.ville,'type':'vente','categorie':'appartement' })|creerlienstatique}}" title="{{ '#venteappartementa'|translate|raw|capitalize }} {{ tw.agence.ville }}">
                                     {{ "#voirventeappartementa"|translate|raw|capitalize }}
                                     {% if LANG == "fr" %}
                                         {{ tw.agence.ville|raw}}
@@ -120,7 +134,7 @@
                                     {% endif %}
                                 </a>
                             </li>
-                            <li><a href="{{getRoutingMasque("masqueListingOffreTypeCategorieVille",{'ville':  "cannes",'type':'vente','categorie':'maison' })|creerlienstatique}}" title="{{ '#ventevillaa'|translate|raw|capitalize }}
+                            <li><a href="{{getRoutingMasque("masqueListingOffreTypeCategorieVille",{'ville':  tw.agence.ville,'type':'vente','categorie':'maison' })|creerlienstatique}}" title="{{ '#ventevillaa'|translate|raw|capitalize }}
                             {% if LANG == "fr" %}
                                 {{ tw.agence.ville|raw }}
                             {% elseif LANG == "en" %}
@@ -133,7 +147,7 @@
 
 
                             {% set critere = {
-                                    'ville' : 'antibes',
+                                    'ville' : tw.agence.ville,
                                     '@groupby': [
                                     "secteur"
                                 ],
@@ -147,7 +161,7 @@
                             } %}
 
                             {% set criteretotal = {
-                                'ville' : 'antibes',
+                                'ville' : tw.agence.ville,
                                 '@groupby': [
                                     "secteur"
                                 ],
@@ -161,7 +175,7 @@
                             {% set countItem = 0 %}
                             {% for item in datas if countItem < 8  %}
                                 {%  if item.secteur is defined and item.secteur != ''  %}
-                                    <li><a title="{{ "#immobilier"|translate|capitalize }} Cannes {{ item.secteur }}" href="{{ getRoutingMasque("masqueListingOffreVilleSecteur",{'ville':  'mougins', 'categorie': "#appartement"|translate, 'type': "#venteurl"|translate, 'secteur': item.secteur })|creerlienstatique }}"> {{ "#nossecteursa"|translate|capitalize }} Mougins {{ item.secteur }}</a></li>
+                                    <li><a title="{{ "#immobilier"|translate|capitalize }} {{ tw.agence.ville }} {{ item.secteur }}" href="{{ getRoutingMasque("masqueListingOffreVilleSecteur",{'ville':  'mougins', 'categorie': "#appartement"|translate, 'type': "#venteurl"|translate, 'secteur': item.secteur })|creerlienstatique }}"> {{ "#nossecteursa"|translate|capitalize }} Mougins {{ item.secteur }}</a></li>
                                     {% set countItem = countItem + 1 %}
                                 {% endif %}
                             {% endfor %}

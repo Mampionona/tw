@@ -1,7 +1,20 @@
 {% extends('structure/layout.html.twig') %}
 
-{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
-{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+{% set Alerte = tw.alerteemail %}
+
+{% if LANG == 'fr' %}
+    {% set metaTitle = Alerte.metaTitleAlerteFr %}
+    {% set metaDescription = Alerte.metaDescriptionAlerteFr %}
+    {% set metaKeywords = Alerte.metaKeywordAlerteFr %}
+{% else %}
+    {% set metaTitle = Alerte.metaTitleAlerteEn %}
+    {% set metaDescription = Alerte.metaDescriptionAlerteEn %}
+    {% set metaKeywords = Alerte.metaKeywordAlerteEn %}
+{% endif %}
+
+{% block metaTitle %}{{ metaTitle }}{% endblock %}
+{% block metaDescription %}{{ metaDescription }}{% endblock %}
+{% block metaKeywords %}{{ metaKeywords }}{% endblock %}
 
 {% block linkCSS %}
     {{ parent() }}

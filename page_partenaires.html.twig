@@ -1,0 +1,104 @@
+{% extends('structure/layout.html.twig') %}
+{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
+{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+
+
+{% if items|length > 0 %}
+    {% block linkRevPrev %}
+        {% if pagination.pagetotal > 1 and pagination.pagecourante > 1 %}
+{{linkrev('prev', PROTOCOLE ~ NDD ~ (URL|urlpagination(pagination.pageprecedente)))|raw}}
+        {% endif %}
+    {% endblock %}
+    {% block linkRevNext %}
+        {% if pagination.pagetotal > 1 and pagination.pagecourante < (pagination.pagetotal-1)%}
+{{linkrev('next', PROTOCOLE ~ NDD ~ (URL|urlpagination(pagination.pagesuivante)))|raw}}
+        {% endif %}
+    {% endblock %}
+{% endif %}
+
+
+{% block linkCSS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block classBody %}page-statique partenaires{% endblock classBody %}
+
+{% block content %}
+    <div id="listing">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="partenaires">
+                        <h1>{{include(template_from_string(param._meta.title))}}</h1>
+                        {% include "structure/elements/listing/pagination/v1/cms-pagination.html.twig" %}
+
+                        <ul class="liste-items">
+                            {% for item in items %}
+                                <li class="liste-item-wrapper">
+                                    {% include "structure/elements/listingcms/cms-item.html.twig" %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        {% if items|length > 0 %}
+                            {% include "structure/elements/listing/pagination/v1/cms-pagination.html.twig" %}
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2>
+                                    {% if LANG == "fr" %}
+                                        {{ tw.partenaires.titrePartenairesFr|raw|capitalize }}
+                                    {% else %}
+                                        {{ tw.partenaires.titrePartenairesEn|raw|capitalize }}
+                                    {% endif %}
+                                </h2>
+                                <div class="partenaires-texte">
+                                    {% if LANG == "fr" %}
+                                        {{ tw.partenaires.textePartenairesFr|raw }}
+                                    {% else %}
+                                        {{ tw.partenaires.textePartenairesEn|raw }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                {% set varsContactForm = {'titre': '#demandepartenariat'} %}
+                                {% include "structure/elements/forms/contactagence/v1/form-contactagence-v1.html.twig" with varsContactForm %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottomJS %}
+    {{ parent() }}
+
+    <script language="javascript">
+
+        $(document).ready(function (){
+
+        // ==================================================
+        // FORMULAIRE DE CONTACT
+        // ==================================================
+
+            $(".contact-form").on("submit",function(event){
+                event.preventDefault();
+                var params = {
+                    lang: "{{ LANG }}",
+                    urlpage: (document.URL).replace(".web-frontend.dev.twimmo.net", ""),
+                };
+
+                twplugins.FormContactSite(params);
+            });
+        });
+
+    </script>
+
+{% endblock %}

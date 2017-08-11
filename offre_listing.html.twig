@@ -1,0 +1,399 @@
+{% extends('structure/layout.html.twig') %}
+
+{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
+{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+{% block metaKeywords %}{{include(template_from_string(param._meta.keywords|default("")))}}{% endblock %}
+
+{% block linkCSS %}
+    {{ parent() }}
+    <link href="/default/lib/twcarte/css/Twcarte-v1.css" rel="stylesheet">
+{% endblock %}
+
+{% block topJS %}
+    {{ parent() }}
+{% endblock %}
+
+{% block classBody %}listing{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        {# {{ dump() }} #}
+            {# //////////////  Test sur le nom de la ville (param.ville) ///////
+            // remplace les espaces et - par des + pour effectuer comparaison //
+            // Fonctionne/corrige nom de ville composé avec espace et tiret   //
+            ////////////////////////////////////////////////////////////////////
+            #}
+
+            {% set critere = {
+                    '@groupby': [
+                            "ville"
+                    ],
+                    '@tri' : {
+                        'count' : "desc"
+                    }
+                }
+            %}
+
+            {% set datas = groupOffres(critere) %}
+            {% set ville = param.ville|lower|replace({"-":"+" , " ":"+"}) %}
+
+            {% for item in datas %}
+                {% set nomville = item.ville|lower|replace({"-":"+" , " ":"+"}) %}
+                {# <li> {{ item.ville }}  //  {{ nomville }} </li> #}
+                {% if nomville == ville %}
+                    {% set param = param|merge({'ville': item.ville }) %}
+                {% endif %}
+            {% endfor %}
+
+         {% if param.type=="location"  %}
+                <h1 class="liste-titre" >{{ "#locations"|translate|capitalize }}</h1>
+            {% elseif param.prix == "1500000p"  %}
+                <h1 class="liste-titre" >{{ "Vente appartements et villas de luxe et prestige à cannes "|translate|capitalize }} - </h1>
+            {% elseif param.categorie=="parking"  %}
+                <h1 class="liste-titre" >{{ "#garage/parking"|translate|capitalize }} - </h1>
+            {% elseif param.type=="professionnel"  %}
+                <h1 class="liste-titre" >{{ "#commerce"|translate|capitalize }}</h1>
+            {% elseif param.type is defined %}
+                <h1 class="liste-titre" >
+                {% if param.type=="vente" %}
+                    {% if param.prestation is defined %}
+                        {{"#vente"|translate|capitalize}}
+                        {% if param.categorie =="maison" %}
+                            {{ "#villas"|translate }}
+                        {% elseif param.categorie =="appartement" %}
+                            {{ "#appartements"|translate }}
+                        {% endif %}
+                        {{ param.prestation }}
+                    {% else %}
+                        {{"#venteachat"|translate|capitalize}}
+                        {% if 'Moteur' in param._meta.title %}
+                            {# do nothing #}
+                        {% elseif param.categorie =="maison" or param.categorie=="villa" %}
+                            {% if param.chambres is defined  %}
+                                {{ "#villas"|translate }}
+                                {% if 'p' not in param.chambres %}
+                                    {{ param.chambres }} {{ "#chambres"|translate }}
+                                {% else %}
+                                    {% set lgth=(param.chambres|length)-1 %}
+                                    {{ param.chambres|slice(0,lgth) }} {{ "#chambres"|translate }} {# {{ "#etplus"|translate }} #}
+                                {% endif %}
+                            {% elseif param.pieces is defined %}
+                                {{ "#villas"|translate }}
+                                {% if 'p' not in param.pieces %}
+                                    {{ param.pieces }} {{ "#pieces"|translate }}
+                                {% else %}
+                                    {% set lgth=(param.pieces|length)-1 %}
+                                    {{ param.pieces|slice(0,lgth) }} {{ "#pieces"|translate }}
+                                    {# {{ "#etplus"|translate }} #}
+                                {% endif %}
+                            {% else %}
+                                {{ "#villas"|translate }}
+                            {% endif %}
+                        {% elseif param.pieces == '2' in param.pieces%}
+                            {{ "#2piecesstudio"|translate }}
+                        {% elseif param.pieces == '1' in param.pieces%}
+                            {{ "#studio"|translate }}
+                        {% elseif param.categorie =="appartement" %}
+                            {% if param.pieces is defined %}
+                                    {% if 'p' not in param.pieces  %}
+                                        {{ param.pieces }} {{ "#pieces"|translate }}
+                                    {% else %}
+                                        {% set lgth=(param.pieces|length)-1 %}
+                                        {{ param.pieces|slice(0,lgth) }} {{ "#pieces"|translate }} {# {{ "#etplus"|translate }} #}
+                                    {% endif %}
+                            {% else %}
+                                {{ "#appartements"|translate }}
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                {% if param.type == 'neuf' %}
+                    {{ '#neuf'|translate|capitalize }}
+                {% endif %}
+                </h1>
+            {% else %}
+                <h1 class="liste-titre" > {{ "#immobilier"|translate|capitalize }} {{ param.ville }}
+                {% if param.secteur is defined %}
+                    {{ param.secteur|capitalize }}
+                {% endif %}
+                 - </h1>
+            {% endif %}
+
+            {# {% if param.ville is defined %}
+                <h1 class="liste-titre" >
+                {% if param.type =="vente" and param.prestation is defined %}
+                    {{"#vente"|translate|capitalize}}
+                    {% if param.categorie is defined %}
+                        {{ param.categorie|translate }}
+                    {% endif %}
+                    {{ param.prestation }}
+                {% elseif param.type =="vente"  %}
+                    {{"#venteachat"|translate|capitalize}}
+                    {% if param.categorie is defined %}
+                        {% if param.categorie =="maison" %}
+                            {{ "#villas"|translate }}
+                        {% else %}
+                            {{ param.categorie|translate }}
+                        {% endif %}
+                    {% endif %}
+                    {% if param.pieces == "1" %}
+                        {{ "#studio"|translate }}
+                    {% elseif param.pieces is defined %}
+                        {% if 'p' not in param.pieces  %}
+                            {{ param.pieces }} {{ "#pieces"|translate }}
+                        {% else %}
+                            {% set lgth=(param.pieces|length)-1 %}
+                            {{ param.pieces|slice(0,lgth) }} {{ "#pieces"|translate }} {{ "#etplus"|translate }}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {{ "#immobilier"|translate|capitalize }}
+                {% endif %}
+                {{ "#a"|translate }}  {{ param.ville|capitalize }} - </h1>
+            {% elseif param.type=="location"  %}
+                <h1 class="liste-titre" >
+                {{ "#location"|translate|capitalize }} - </h1>
+            {% endif %} #}
+
+            {# {% if param.prix is defined %}
+                <h1 class="liste-titre" >
+                    {% if param.categorie is defined %}
+                        {{ param.categorie|translate|capitalize }}
+                    {% endif %}
+                    {% set lgth=(param.prix|length)-1 %}
+                    <strong>
+                        {% if 'p' in param.prix  %}
+                             {{ "#aplusde"|translate }}
+                        {% elseif  'm' in param.prix  %}
+                            {{ "#amoinsde"|translate }}
+                        {% endif %}
+                        {{ param.prix|slice(0,lgth) }} €
+                    </strong> -
+                </h1> #}
+            {# {% elseif param.prix_min is defined and param.prix_max is defined %}
+                <h1 class="liste-titre" >
+                    {% if param.categorie is defined %}
+                        {{ param.categorie|translate|capitalize }}
+                    {% endif %}
+                    <strong> {{ "#entre"|translate }} {{ param.prix_min }} </strong>
+                    <strong> {{ "#et"|translate }} {{ param.prix_max }} €</strong> -
+                </h1> #}
+            {# {% endif %}  #}
+
+
+        <h2 class="liste-titre">
+
+        {% if pagination.total > 1 %}
+            {% if param.type == "vente" %}
+                {% if param.categorie == "maison" %}
+                    {{ "#nbvillatrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "1" %}
+                    {{ "#nbstudiotrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "2" %}
+                    {{ "#nb2ptrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "3" %}
+                    {{ "#nb3ptrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "4p" %}
+                    {{ "#nb4pplustrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.categorie == "terrain" %}
+                    {{ "#nbterraintrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.categorie == "garage" %}
+                    {{ "#nbgaragetrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% else %}
+                    {{ "#nbbientrouve"|translate(pagination.total)|raw }} :
+                {% endif %}
+            {% elseif param.type == "neuf" %}
+                {% if param.categorie == "maison" %}
+                    - {{ "#nbvillaneuftrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "1" %}
+                    - {{ "#nbstudioneuftrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "2" %}
+                    - {{ "#nb2pneuftrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "3" %}
+                    - {{ "#nb3pneuftrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "4p" %}
+                    - {{ "#nb4pplusneuftrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% endif %}
+            {% elseif param.type == "professionnel" %}
+                {% if param.categorie == "maison" %}
+                    {{ "#nbvillaloctrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "1" %}
+                    {{ "#nbstudioloctrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "2" %}
+                    {{ "#nb2ploctrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "3" %}
+                    {{ "#nb3ploctrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.pieces == "4p" %}
+                    {{ "#nb4pplusloctrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% elseif param.categorie == "garage" %}
+                    {{ "#nbgarageloctrouve"|translate(pagination.total|number_format(0, '.', ' '))|raw }}
+                {% else %}
+                    {{ "#nbbientrouve"|translate(pagination.total)|raw }} :
+                {% endif %}
+            {% else %}
+                {{ "#nbbientrouve"|translate(pagination.total)|raw }} :
+            {% endif %}
+        {% endif %}
+
+        </h2>
+
+        {% if pagination.total == 0 %}
+            {% set contactUrl = getRoutingMasque('masqueAgenceImmobiliere', {}) %}
+            <p class="msg-aucun-bien">{{ '#message.aucun.bien'|translate(contactUrl|creerlienstatique)|raw }}</p>
+        {% endif %}
+
+        {#==== V1 - Pagination ====#}
+        {% if pagination.total > 1 %}
+            {% include "structure/elements/listing/pagination/v1/pagination.html.twig" %}
+        {% endif %}
+
+        {#==== V1 - xs1-ms2-lg4 - Items Row ====#}
+        <div class="biens">
+            <div class="row">
+                {% for item in items %}
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        {% include "structure/elements/listing/items/v1/listing-item.html.twig" %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {#==== V1 - Pagination ====#}
+        {% if pagination.total > 1 %}
+            {% include "structure/elements/listing/pagination/v1/pagination.html.twig" %}
+        {% endif %}
+
+    </div>
+
+    {# MAP #}
+    <section id="map-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="plan-ville" aria-labelledby="plan-ville-titre" class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="panel panel-default geolocalisation-biens">
+                                <div class="panel-heading">
+                                    <h2>
+                                        <span>{{ "#geolocapproxbiens"|translate|upper }}</span>
+                                    </h2>
+                                </div>
+                                {%include 'Info/Carte/Twcarte-v1.twig' with {'CONTAINERID' : "plan-ville"} %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </section>
+
+   <div class="about_actualite">
+    {#==== Content Référencement ====#}
+    {% if LANG == "fr" %}
+        {#==== V1 - Content Référencement Ville Dynamique ====#}
+        {# {% if param.ville != "" and ',' not in param.ville %}
+            {% include "structure/elements/listing/lastcontainer/lastcontainerlisting-v1.html.twig" %}
+        {% endif %}  #}
+        {#==== V2 - Content Référencement Ville FIXE ou listing villes multiples ====#}
+        {# {% if param.ville == "" %}
+            {% set param = param|merge({'ville': tw.agence.ville }) %}
+            {% include "structure/elements/listing/lastcontainer/lastcontainerlisting-v2.html.twig" %}
+        {% endif %} #}
+
+
+        {% if param.ville == ""  or ',' in param.ville %}
+            {#==== V2 - Content Référencement Ville FIXE ou listing villes multiples ====#}
+            {% set param = param|merge({'ville': tw.agence.ville }) %}
+            {% include "structure/elements/listing/lastcontainer/lastcontainerlisting-v2.html.twig" %}
+        {% elseif param.ville != ""  %}
+            {#==== V1 - Content Référencement Ville Dynamique ====#}
+            {% include "structure/elements/listing/lastcontainer/lastcontainerlisting-v1.html.twig" %}
+        {% endif %}
+    {% endif %}
+    </div>
+
+
+{% endblock %}
+
+
+{% block bottomJS %}
+    {{ parent() }}
+
+    <script language="javascript">
+
+        $(document).ready(function (){
+
+            // ==================================================
+            // PAGE LISTING
+            // ==================================================
+
+            // TOOLTIPS DU DROPDOWN-MENU DE TRI
+            $(".sorting-toggle .dropdown-menu > li.active > a").on("mouseover", function() {
+
+                var tooltipText = "Cliquez pour afficher par ordre ";
+                var icon = $(this).children(".fa");
+
+                if( icon.hasClass("fa-sort-numeric-desc") ) {
+                    tooltipText = tooltipText + "croissant";
+
+                } else if( icon.hasClass("fa-sort-numeric-asc") ) {
+                    tooltipText = tooltipText + "décroissant";
+                }
+
+                $(this).tooltip({
+                    'placement' : "top",
+                    'title' : tooltipText
+                }).tooltip('show');
+
+            });
+
+        });
+
+        {#$('button.callcarte').on('click', function(){#}
+            {#var articleDatas = $(this).parents('article').data();#}
+            {#$('#myModalMap h4:first').html(articleDatas.title + ' ' + articleDatas.details + ' ' + articleDatas.prix);#}
+            {#$('#myModalMap a:first').attr('href', articleDatas.lien);#}
+            {#$("#myModalMap").on('shown.bs.modal', function(){#}
+                {#$('#myModalMap .twcarte-map-google').html('');#}
+                {#$('#myModalMap .twcarte-legende-poi').html('');#}
+                {#var latgps = articleDatas.latgps;#}
+                {#var longgps = articleDatas.longgps;#}
+                {#var twcd = Twcarte#}
+                    {#.setContainer('#myModalMap')#}
+                    {#.setMode('detail')#}
+                    {#.init(tabPoi)#}
+                    {#.setCentre(latgps, longgps, 14)#}
+                    {#.insertMap();#}
+
+                {#if(!articleDatas.centreville){#}
+                    {#//If geolocation of the real estate, insert round#}
+                    {#twcd.insertSymbol(#}
+                        {#{#}
+                            {#infoHover: articleDatas.prix,#}
+                            {#infoClick: {#}
+                                {#photo: articleDatas.photo,#}
+                                {#title: articleDatas.title,#}
+                                {#details: articleDatas.details,#}
+                                {#prix: articleDatas.prix,#}
+                                {#lien: articleDatas.lien#}
+                            {#}#}
+                        {#},#}
+                        {#{#}
+                            {#lat: Number(latgps),#}
+                            {#lng: Number(longgps)#}
+                        {#},#}
+                        {#articleDatas.rayon#}
+                    {#);#}
+                {#}else{#}
+                    {#$('[data-tradgeolocville]').html($('[data-tradgeolocville]').data('tradgeolocville'));#}
+                {#}#}
+                {#twcd.end();#}
+            {#});#}
+            {#$("#myModalMap").modal();#}
+        {#});#}
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{tw.global.carte.key}}&libraries=places&callback=loadTwcarteListe&language={{LANG}}" async defer></script>
+{% endblock %}

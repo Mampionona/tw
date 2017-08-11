@@ -1,7 +1,20 @@
 {% extends('structure/layout.html.twig') %}
 
-{% block metaTitle %}{{include(template_from_string(param._meta.title))}}{% endblock %}
-{% block metaDescription %}{{include(template_from_string(param._meta.description))}}{% endblock %}
+{% set Estimer = tw.estimer %}
+
+{% if LANG == 'fr' %}
+    {% set metaTitle = Estimer.metaTitleEstimerFr %}
+    {% set metaDescription = Estimerome.metaDescriptionEstimerFr %}
+    {% set metaKeywords = Estimer.metaKeywordEstimerFr %}
+{% else %}
+    {% set metaTitle = Estimer.metaTitleEstimerEn %}
+    {% set metaDescription = Estimer.metaDescriptionEstimerEn %}
+    {% set metaKeywords = Estimer.metaKeywordEstimerEn %}
+{% endif %}
+
+{% block metaTitle %}{{ metaTitle }}{% endblock %}
+{% block metaDescription %}{{ metaDescription }}{% endblock %}
+{% block metaKeywords %}{{ metaKeywords }}{% endblock %}
 
 {% block linkCSS %}
     {{ parent() }}
